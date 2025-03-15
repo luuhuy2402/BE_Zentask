@@ -20,13 +20,10 @@ const creatNew = async (req, res, next) => {
         description: Joi.string().required().min(3).max(256).trim().strict(),
     });
     try {
-        console.log(req.body);
         //SET abortEarly flase để có nhiều lỗi validation thì trả về tất cả lỗi
         await correctCondition.validateAsync(req.body, { abortEarly: false });
-        // next();
-        res.status(StatusCodes.CREATED).json({
-            message: "Post form Validation: API create new board",
-        });
+        //validate dữ liệu hợp lệ thì cho request đi tiếp sang controller
+        next();
     } catch (error) {
         console.log(error);
         res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({
