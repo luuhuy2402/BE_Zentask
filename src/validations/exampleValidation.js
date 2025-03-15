@@ -1,1 +1,0 @@
-// validate dữ liệu từ FE gửi lên
