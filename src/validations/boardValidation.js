@@ -1,5 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import Joi from "joi";
+import ApiError from "../utils/ApiError";
 
 // validate dữ liệu từ FE gửi lên
 const creatNew = async (req, res, next) => {
@@ -25,10 +26,12 @@ const creatNew = async (req, res, next) => {
         //validate dữ liệu hợp lệ thì cho request đi tiếp sang controller
         next();
     } catch (error) {
-        console.log(error);
-        res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({
-            errors: new Error(error).message,
-        });
+        const errorMessage = new Error(error).message;
+        const customError = new ApiError(
+            StatusCodes.UNPROCESSABLE_ENTITY,
+            errorMessage
+        );
+        next(customError); //sẽ nhảy sang file server vào phần xử lý lỗi tập trung
     }
 };
 

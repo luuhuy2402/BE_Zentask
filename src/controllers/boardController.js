@@ -11,9 +11,7 @@ const creatNew = async (req, res, next) => {
             message: "Post form Controller: API create new board",
         });
     } catch (error) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            errors: error.message,
-        });
+        next(error); //sẽ nhảy sang file server vào phần xử lý lỗi tập trung
     }
 };
 
