@@ -13,4 +13,6 @@ Router.route("/")
     })
     .post(boardValidation.creatNew, boardController.creatNew);
 
+Router.route("/:id").get(boardController.getDetails).put();
+
 export const boardRoute = Router;

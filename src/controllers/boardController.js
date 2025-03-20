@@ -14,4 +14,14 @@ const creatNew = async (req, res, next) => {
     }
 };
 
-export const boardController = { creatNew };
+const getDetails = async (req, res, next) => {
+    try {
+        const boardId = req.params.id;
+        //sẽ có thêm userId để chỉ lấy board thuộc về user đó,...
+        const board = await boardService.getDetails(boardId);
+        res.status(StatusCodes.OK).json(board);
+    } catch (error) {
+        next(error); //sẽ nhảy sang file server vào phần xử lý lỗi tập trung
+    }
+};
+export const boardController = { creatNew, getDetails };
