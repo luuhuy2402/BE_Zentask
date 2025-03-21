@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import { boardModel } from "../models/boardModel";
 import ApiError from "../utils/ApiError";
 import { slugify } from "../utils/formatters";
+import { cloneDeep } from "lodash";
 
 // xử lý logic : controller là xử lý điều hướng xong chuyển sang service
 const createNew = async (reqbody) => {
@@ -37,7 +38,23 @@ const getDetails = async (boardId) => {
         if (!board) {
             throw new ApiError(StatusCodes.NOT_FOUND, "Board not found!");
         }
-        return board;
+        // clone Deep board ra một cái mới để xử lý, ko ảnh hưởng tới board ban đầu
+        const resBoard = cloneDeep(board);
+        // Đưa card về đúng column của nó
+        resBoard.columns.forEach((column) => {
+            // C1: dunfg .equals vif MongoDB cos support .equals dể so sánh ObjectId
+            // column.cards = resBoard.cards.filter((card) =>
+            //     card.columnId.equals(column._id)
+            // );
+            // C2: Conver ObjectID về string của JS => so sánh
+            column.cards = resBoard.cards.filter(
+                (card) => card.columnId.toString() === column._id.toString()
+            );
+        });
+        //Xóa mảng card khỏi board ban đầu
+        delete resBoard.cards;
+
+        return resBoard;
     } catch (error) {
         throw error;
     }
