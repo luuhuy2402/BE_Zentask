@@ -32,9 +32,17 @@ const validateBeforeCreate = async (data) => {
 const createNew = async (data) => {
     try {
         const validData = await validateBeforeCreate(data);
+
+        //Biến đổi một số dữ liệu liên quan tới object chuẩn
+        const newCardToAdd = {
+            ...validData,
+            boardId: new ObjectId(validData.boardId),
+            columnId: new ObjectId(validData.columnId),
+        };
+
         const createdCard = await GET_DB()
             .collection(CARD_COLLECTION_NAME)
-            .insertOne(validData);
+            .insertOne(newCardToAdd);
         return createdCard;
     } catch (error) {
         throw new Error(error);
