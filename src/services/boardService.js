@@ -59,7 +59,21 @@ const getDetails = async (boardId) => {
         throw error;
     }
 };
+
+const update = async (boardId, reqBody) => {
+    try {
+        //cần truyền thên updatedAt để cập nhật thời gian cập nhật
+        const updateData = { ...reqBody, updateAt: Date.now() };
+
+        const updatedBoard = await boardModel.update(boardId, updateData);
+
+        return updatedBoard;
+    } catch (error) {
+        throw error;
+    }
+};
 export const boardService = {
     createNew,
     getDetails,
+    update,
 };

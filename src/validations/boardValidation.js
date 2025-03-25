@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import Joi from "joi";
 import ApiError from "../utils/ApiError";
 import { BOARD_TYPES } from "../utils/constants";
+// import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from "../utils/validators";
 
 // validate dữ liệu từ FE gửi lên
 const creatNew = async (req, res, next) => {
@@ -39,4 +40,39 @@ const creatNew = async (req, res, next) => {
     }
 };
 
-export const boardValidation = { creatNew };
+const update = async (req, res, next) => {
+    //Chú ý ko dùng require khi update
+    const correctCondition = Joi.object({
+        title: Joi.string().min(3).max(50).trim().strict().message({}),
+        description: Joi.string().min(3).max(256).trim().strict(),
+        type: Joi.string().valid(BOARD_TYPES.PUBLIC, BOARD_TYPES.PRIVATE),
+        // thêm field columnOrderIds vào cũng được( thêm chắc chắn)
+        // columnOrderIds: Joi.array()
+        //     .items(
+        //         Joi.string()
+        //             .pattern(OBJECT_ID_RULE)
+        //             .message(OBJECT_ID_RULE_MESSAGE)
+        //     )
+        //     .default([]),
+    });
+    try {
+        //SET abortEarly flase để có nhiều lỗi validation thì trả về tất cả lỗi
+        await correctCondition.validateAsync(req.body, {
+            abortEarly: false,
+            //Khi update thì cho phép Unknown để cho phép update các field khác mà chưa được định nghĩa trong trường hợp này
+            //mk đang đẩy lên field columnOrderIds
+            allowUnknown: true,
+        });
+        //validate dữ liệu hợp lệ thì cho request đi tiếp sang controller
+        next();
+    } catch (error) {
+        const errorMessage = new Error(error).message;
+        const customError = new ApiError(
+            StatusCodes.UNPROCESSABLE_ENTITY,
+            errorMessage
+        );
+        next(customError); //sẽ nhảy sang file server vào phần xử lý lỗi tập trung
+    }
+};
+
+export const boardValidation = { creatNew, update };
