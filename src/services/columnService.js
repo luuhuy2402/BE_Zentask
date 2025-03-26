@@ -14,19 +14,31 @@ const createNew = async (reqbody) => {
             createdColumn.insertedId
         );
 
-        if(getNewColumn){
+        if (getNewColumn) {
             // Xử lý cấu truc da data trc khi trả dữ liệu về
             getNewColumn.cards = [];
 
             //Cập nhật mảng columnOrderIds trong collecton boards
-            await boardModel.pushColumnOrderIds(getNewColumn)
+            await boardModel.pushColumnOrderIds(getNewColumn);
         }
         return getNewColumn;
     } catch (error) {
         throw error;
     }
 };
+const update = async (columnId, reqBody) => {
+    try {
+        //cần truyền thên updatedAt để cập nhật thời gian cập nhật
+        const updateData = { ...reqBody, updateAt: Date.now() };
 
+        const updatedColumn = await columnModel.update(columnId, updateData);
+
+        return updatedColumn;
+    } catch (error) {
+        throw error;
+    }
+};
 export const columnService = {
     createNew,
+    update,
 };

@@ -11,4 +11,14 @@ const creatNew = async (req, res, next) => {
     }
 };
 
-export const columnController = { creatNew };
+const update = async (req, res, next) => {
+    try {
+        const columnId = req.params.id;
+        const updatedColumn = await columnService.update(columnId, req.body);
+
+        res.status(StatusCodes.OK).json(updatedColumn);
+    } catch (error) {
+        next(error); //sẽ nhảy sang file server vào phần xử lý lỗi tập trung
+    }
+};
+export const columnController = { creatNew, update };
