@@ -3,6 +3,8 @@ import { boardModel } from "../models/boardModel";
 import ApiError from "../utils/ApiError";
 import { slugify } from "../utils/formatters";
 import { cloneDeep } from "lodash";
+import { columnModel } from "../models/columnModel";
+import { cardModel } from "../models/cardModel";
 
 // xử lý logic : controller là xử lý điều hướng xong chuyển sang service
 const createNew = async (reqbody) => {
@@ -72,8 +74,39 @@ const update = async (boardId, reqBody) => {
         throw error;
     }
 };
+
+const moveCardToDifferentColumn = async (reqBody) => {
+    try {
+        /**Khi di chuyển card sang Column khác
+         * B1: Cập nhật mảng cardOrderIds cùa Column ban đầu chứa nó
+         * B2: Cập nhật mảng cardOrderIds của Column tiếp theo
+         * B3: Cập nhập lại trường columnId mới của Card đã kéo
+         */
+        //B1
+        await columnModel.update(reqBody.prevColumnId, {
+            cardOrderIds: reqBody.prevCardOrderIds,
+            updatedAt: Date.now(),
+        });
+        //B2
+        await columnModel.update(reqBody.nextColumnId, {
+            cardOrderIds: reqBody.nextCardOrderIds,
+            updatedAt: Date.now(),
+        });
+        //B3
+        await cardModel.update(reqBody.currentCardId, {
+            columnId: reqBody.nextColumnId,
+        });
+   
+
+        return { updateResult: "Successfully" };
+    } catch (error) {
+      
+        throw error;
+    }
+};
 export const boardService = {
     createNew,
     getDetails,
     update,
+    moveCardToDifferentColumn,
 };

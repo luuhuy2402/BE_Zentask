@@ -122,6 +122,13 @@ const update = async (boardId, updateData) => {
                 delete updateData[filedName];
             }
         });
+
+        //Đối với những dữ liệu liên quan đến ObjectID
+        if (updateData.columnOrderIds) {
+            updateData.columnOrderIds = updateData.columnOrderIds.map(
+                (_id) => new ObjectId(_id)
+            );
+        }
         const result = await GET_DB()
             .collection(BOARD_COLLECTION_NAME)
             .findOneAndUpdate(

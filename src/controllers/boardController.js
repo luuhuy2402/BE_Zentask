@@ -35,4 +35,21 @@ const update = async (req, res, next) => {
         next(error); //sẽ nhảy sang file server vào phần xử lý lỗi tập trung
     }
 };
-export const boardController = { creatNew, getDetails, update };
+
+const moveCardToDifferentColumn = async (req, res, next) => {
+    try {
+        const result = await boardService.moveCardToDifferentColumn(req.body);
+
+        res.status(StatusCodes.OK).json(result);
+    } catch (error) {
+        
+        next(error); //sẽ nhảy sang file server vào phần xử lý lỗi tập trung
+    }
+};
+
+export const boardController = {
+    creatNew,
+    getDetails,
+    update,
+    moveCardToDifferentColumn,
+};
