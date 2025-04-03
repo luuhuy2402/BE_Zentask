@@ -98,7 +98,10 @@ const getDetails = async (id) => {
     }
 };
 
-//nhiệm vụ là push columnId vào cuối mảng columnOrderIds
+/**
+ * Đẩy một phần tử columnId vào cuối mảng ColumnOrderIds
+ * Dùng $push để đẩy 1 phần tử vào cuối mảng
+ */
 const pushColumnOrderIds = async (column) => {
     try {
         const result = await GET_DB()
@@ -106,6 +109,26 @@ const pushColumnOrderIds = async (column) => {
             .findOneAndUpdate(
                 { _id: new ObjectId(column.boardId) },
                 { $push: { columnOrderIds: new ObjectId(column._id) } },
+                { returnDocument: "after" }
+            );
+        return result;
+    } catch (error) {
+        throw new Error(error);
+    }
+};
+
+/**
+ *  Lấy một phần tử columnId ra khỏi mảng columnOrderIds
+ * Dùng $pull để lấy một phần tử ra khỏi mảng
+ * rồi xóa nó đi
+ */
+const pullColumnOrderIds = async (column) => {
+    try {
+        const result = await GET_DB()
+            .collection(BOARD_COLLECTION_NAME)
+            .findOneAndUpdate(
+                { _id: new ObjectId(column.boardId) },
+                { $pull: { columnOrderIds: new ObjectId(column._id) } },
                 { returnDocument: "after" }
             );
         return result;
@@ -150,4 +173,5 @@ export const boardModel = {
     getDetails,
     pushColumnOrderIds,
     update,
+    pullColumnOrderIds,
 };
