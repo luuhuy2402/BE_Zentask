@@ -1,6 +1,7 @@
 import { get } from "lodash";
 import { boardModel } from "../models/boardModel";
 import { columnModel } from "../models/columnModel";
+import { cardModel } from "../models/cardModel";
 
 const createNew = async (reqbody) => {
     try {
@@ -38,7 +39,21 @@ const update = async (columnId, reqBody) => {
         throw error;
     }
 };
+
+const deleteItem = async (columnId) => {
+    try {
+        //Xóa column
+        await columnModel.deleteOneById(columnId);
+        //xóa toàn bộ card thuộc column xóa
+        await cardModel.deleteManyByColumnId(columnId);
+
+        return { deleteResult: "Column and its Cards deleted successfully" };
+    } catch (error) {
+        throw error;
+    }
+};
 export const columnService = {
     createNew,
     update,
+    deleteItem,
 };

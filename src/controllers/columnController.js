@@ -21,4 +21,15 @@ const update = async (req, res, next) => {
         next(error); //sẽ nhảy sang file server vào phần xử lý lỗi tập trung
     }
 };
-export const columnController = { creatNew, update };
+
+const deleteItem = async (req, res, next) => {
+    try {
+        const columnId = req.params.id;
+        const result = await columnService.deleteItem(columnId);
+
+        res.status(StatusCodes.OK).json(result);
+    } catch (error) {
+        next(error); //sẽ nhảy sang file server vào phần xử lý lỗi tập trung
+    }
+};
+export const columnController = { creatNew, update, deleteItem };

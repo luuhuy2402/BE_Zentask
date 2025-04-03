@@ -55,4 +55,25 @@ const update = async (req, res, next) => {
     }
 };
 
-export const columnValidation = { creatNew, update };
+const deleteItem = async (req, res, next) => {
+    //Chú ý ko dùng require khi update
+    const correctCondition = Joi.object({
+        id: Joi.string()
+            .required()
+            .pattern(OBJECT_ID_RULE)
+            .message(OBJECT_ID_RULE_MESSAGE),
+    });
+    try {
+        await correctCondition.validateAsync(req.params);
+        //validate dữ liệu hợp lệ thì cho request đi tiếp sang controller
+        next();
+    } catch (error) {
+        const errorMessage = new Error(error).message;
+        const customError = new ApiError(
+            StatusCodes.UNPROCESSABLE_ENTITY,
+            errorMessage
+        );
+        next(customError); //sẽ nhảy sang file server vào phần xử lý lỗi tập trung
+    }
+};
+export const columnValidation = { creatNew, update, deleteItem };
