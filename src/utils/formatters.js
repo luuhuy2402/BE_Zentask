@@ -1,3 +1,5 @@
+import { pick } from "lodash";
+
 export const slugify = (val) => {
     if (!val) return "";
     return String(val)
@@ -24,3 +26,18 @@ export const slugify = (val) => {
  * Original String Test: 'Lưu Huy Hiếu''
  * Slug Result: luu-huy-hieu
  */
+
+export const pickUser = (user) => {
+    if (!user) return {};
+    return pick(user, [
+        "_id",
+        "email",
+        "username",
+        "displayName",
+        "avatar",
+        "role",
+        "isActive",
+        "createdAt",
+        "updatedAt",
+    ]);
+};
