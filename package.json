@@ -15,6 +15,7 @@
     "license": "ISC",
     "dependencies": {
         "@babel/runtime": "^7.26.9",
+        "@getbrevo/brevo": "^2.2.0",
         "async-exit-hook": "^2.0.1",
         "bcryptjs": "^3.0.2",
         "cors": "^2.8.5",
@@ -37,5 +38,6 @@
         "babel-plugin-module-resolver": "^5.0.2",
         "eslint": "^9.22.0",
         "nodemon": "^3.1.9"
-    }
+    },
+    "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }
