@@ -8,4 +8,11 @@ Router.route("/register").post(
     userController.creatNew
 );
 
+Router.route("/verify").put(
+    userValidation.verifyAccount,
+    userController.verifyAccount
+);
+
+Router.route("/login").post(userValidation.login, userController.login);
+
 export const userRoute = Router;
