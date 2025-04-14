@@ -11,7 +11,11 @@ import cookieParser from "cookie-parser";
 const START_SERVER = () => {
     const app = express();
 
-    
+    //Fix dịch vụ cache from disk của expressJS
+    app.use((req, res, next) => {
+        res.set("Cache-Control", "no-store");
+        next();
+    });
 
     //Cấu hình Cookie parser
     app.use(cookieParser());

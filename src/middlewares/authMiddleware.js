@@ -24,14 +24,14 @@ const isAuthorized = async (req, res, next) => {
             clientAccessToken,
             env.ACCESS_TOKEN_SECRET_SIGNATURE
         );
-        console.log(accessTokenDecoded);
+        // console.log(accessTokenDecoded);
         //Nếu như token hợp lệ thì lưu thông in giải mã được và req.jwtDecoded, để sử dụng cho các tầng cần xử lý ở phía sau
         req.jwtDecoded = accessTokenDecoded;
 
         //Cho phép request đi tiếp
         next();
     } catch (error) {
-        console.log("authMiddleware", error);
+        // console.log("authMiddleware", error);
         //Nếu accessToken bị hết hạn (expired) thì cần trả về một mã lỗi cho phía FE để gọi api refreshToken
         if (error?.message?.includes("jwt expired")) {
             next(new ApiError(StatusCodes.GONE, "Need to refresh token."));
