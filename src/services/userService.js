@@ -113,7 +113,8 @@ const login = async (reqBody) => {
         const accessToken = await JwtProvider.generateToken(
             userInfo,
             env.ACCESS_TOKEN_SECRET_SIGNATURE,
-            env.ACCESS_TOKEN_LIFE
+            5//5 giây
+            // env.ACCESS_TOKEN_LIFE
         );
 
         const refreshToken = await JwtProvider.generateToken(
