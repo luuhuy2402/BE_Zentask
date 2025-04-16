@@ -80,10 +80,21 @@ const refreshToken = async (req, res, next) => {
         );
     }
 };
+
+const update = async (req, res, next) => {
+    try {
+        const userId = req.jwtDecoded._id; // jwtDecoded được lưu vào request từ tầng Middleware
+        const updatedUser = await userService.update(userId, req.body);
+        res.status(StatusCodes.OK).json(updatedUser);
+    } catch (error) {
+        next(error);
+    }
+};
 export const userController = {
     creatNew,
     verifyAccount,
     login,
     logout,
     refreshToken,
+    update,
 };

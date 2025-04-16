@@ -121,7 +121,6 @@ const login = async (reqBody) => {
             userInfo,
             env.REFRESH_TOKEN_SECRET_SIGNATURE,
             env.REFRESH_TOKEN_LIFE
-            
         );
 
         //Trả về thông tin của user kèm theo 2 cái token vừa tạo
@@ -155,4 +154,50 @@ const refreshToken = async (clientRefreshToken) => {
         throw error;
     }
 };
-export const userService = { createNew, verifyAccount, login, refreshToken };
+const update = async (userId, reqBody) => {
+    try {
+        /**Query User và kiểm tra */
+        const existUser = await userModel.findOneById(userId);
+        if (!existUser)
+            throw new ApiError(StatusCodes.NOT_FOUND, "Account not found!");
+        if (!existUser.isActive)
+            throw new ApiError(
+                StatusCodes.NOT_ACCEPTABLE,
+                "Your account is not active!"
+            );
+        //Khởi tạo kết quả updated User ban đầu là empty
+        let updatedUser = {};
+        //TH change password
+        if (reqBody.current_password && reqBody.new_password) {
+            //Kiểm tra xem current_password đúng ko
+            if (
+                !bcrypt.compareSync(
+                    reqBody.current_password,
+                    existUser.password
+                )
+            ) {
+                throw new ApiError(
+                    StatusCodes.NOT_ACCEPTABLE,
+                    "Your Current Password is incorrect!"
+                );
+            }
+            //Nếu current_password đúng thì hash password mới và update vào DB
+            updatedUser = await userModel.update(userId, {
+                password: bcrypt.hashSync(reqBody.new_password, 8),
+            });
+        } else {
+            //TH update các thông tin chung như displayname
+            updatedUser = await userModel.update(userId, reqBody);
+        }
+        return pickUser(updatedUser);
+    } catch (error) {
+        throw error;
+    }
+};
+export const userService = {
+    createNew,
+    verifyAccount,
+    login,
+    refreshToken,
+    update,
+};
