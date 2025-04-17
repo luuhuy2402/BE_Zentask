@@ -2,6 +2,7 @@ import express from "express";
 import { userValidation } from "../../validations/userValidation";
 import { userController } from "../../controllers/userController";
 import { authMiddleware } from "../../middlewares/authMiddleware";
+import { multerUpLoadMiddleware } from "../../middlewares/multerUploadMiddleware";
 
 const Router = express.Router();
 Router.route("/register").post(
@@ -21,6 +22,7 @@ Router.route("/refresh_token").get(userController.refreshToken);
 
 Router.route("/update").put(
     authMiddleware.isAuthorized,
+    multerUpLoadMiddleware.upload.single("avatar"), //trùng key mà FE đẩy lên
     userValidation.update,
     userController.update
 );
