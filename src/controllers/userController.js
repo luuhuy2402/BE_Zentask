@@ -86,9 +86,13 @@ const update = async (req, res, next) => {
         const userId = req.jwtDecoded._id; // jwtDecoded được lưu vào request từ tầng Middleware
 
         const userAvatarFile = req.file;
-        console.log("Controller > userAvartarFile ", userAvatarFile);
-        
-        const updatedUser = await userService.update(userId, req.body);
+        // console.log("Controller > userAvartarFile ", userAvatarFile);
+
+        const updatedUser = await userService.update(
+            userId,
+            req.body,
+            userAvatarFile
+        );
         res.status(StatusCodes.OK).json(updatedUser);
     } catch (error) {
         next(error);

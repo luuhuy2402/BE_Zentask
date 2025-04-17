@@ -8,6 +8,7 @@ import { WEBSITE_DOMAIN } from "../utils/constants";
 import { BrevoProvider } from "../providers/BrevoProvider";
 import { JwtProvider } from "../providers/JwtProvider";
 import { env } from "../config/environment";
+import { CloudinaryProvider } from "../providers/CloudinaryProvider";
 
 const createNew = async (reqBody) => {
     try {
@@ -154,7 +155,7 @@ const refreshToken = async (clientRefreshToken) => {
         throw error;
     }
 };
-const update = async (userId, reqBody) => {
+const update = async (userId, reqBody, userAvatarFile) => {
     try {
         /**Query User và kiểm tra */
         const existUser = await userModel.findOneById(userId);
@@ -184,6 +185,18 @@ const update = async (userId, reqBody) => {
             //Nếu current_password đúng thì hash password mới và update vào DB
             updatedUser = await userModel.update(userId, {
                 password: bcrypt.hashSync(reqBody.new_password, 8),
+            });
+        } else if (userAvatarFile) {
+            //Trường hợp upload file lên Cloud Stỏage: Cloudinary
+            const uploadResult = await CloudinaryProvider.streamUpload(
+                userAvatarFile.buffer,
+                "users"
+            );
+            console.log(" uploadResult", uploadResult);
+
+            //Lưu lại url của file ảnh vào DB
+            updatedUser = await userModel.update(userId, {
+                avatar: uploadResult.secure_url,
             });
         } else {
             //TH update các thông tin chung như displayname
