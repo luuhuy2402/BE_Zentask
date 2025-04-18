@@ -16,9 +16,10 @@ const creatNew = async (req, res, next) => {
 
 const getDetails = async (req, res, next) => {
     try {
+        const userId = req.jwtDecoded._id;
         const boardId = req.params.id;
         //sẽ có thêm userId để chỉ lấy board thuộc về user đó,...
-        const board = await boardService.getDetails(boardId);
+        const board = await boardService.getDetails(userId, boardId);
         res.status(StatusCodes.OK).json(board);
     } catch (error) {
         next(error); //sẽ nhảy sang file server vào phần xử lý lỗi tập trung

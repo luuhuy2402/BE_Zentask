@@ -35,9 +35,9 @@ const createNew = async (reqbody) => {
     }
 };
 
-const getDetails = async (boardId) => {
+const getDetails = async (userId, boardId) => {
     try {
-        const board = await boardModel.getDetails(boardId);
+        const board = await boardModel.getDetails(userId, boardId);
         if (!board) {
             throw new ApiError(StatusCodes.NOT_FOUND, "Board not found!");
         }
@@ -106,7 +106,7 @@ const moveCardToDifferentColumn = async (reqBody) => {
 
 const getBoards = async (userId, page, itemsPerPage) => {
     try {
-        //nếu không tồn tại page. itemsPerPage gửi len thì gán gtri mặc định 
+        //nếu không tồn tại page. itemsPerPage gửi len thì gán gtri mặc định
         if (!page) page = DEFAULT_PAGE;
         if (!itemsPerPage) itemsPerPage = DEFAULT_ITEMS_PER_PAGE;
         const results = await boardModel.getBoards(

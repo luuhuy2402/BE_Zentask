@@ -73,18 +73,23 @@ const findOneById = async (boardId) => {
 };
 
 // Query tổng hợp (aggregate) để lấy toàn bộ Columns và Cards thuộc về Board
-const getDetails = async (id) => {
+const getDetails = async (userId, boardId) => {
     try {
-        // const result = await GET_DB()
-        //     .collection(BOARD_COLLECTION_NAME)
-        //     .findOne({
-        //         _id: new ObjectId(id),
-        //     });
+        const queryConditions = [
+            { _id: new ObjectId(boardId) },
+            { _destroy: false },
+            {
+                $or: [
+                    { ownerIds: { $all: [new ObjectId(userId)] } },
+                    { memberIds: { $all: [new ObjectId(userId)] } },
+                ],
+            },
+        ];
 
         const result = await GET_DB()
             .collection(BOARD_COLLECTION_NAME)
             .aggregate([
-                { $match: { _id: new ObjectId(id), _destroy: false } },
+                { $match: { $and: queryConditions } },
                 {
                     $lookup: {
                         from: columnModel.COLUMN_COLLECTION_NAME,
