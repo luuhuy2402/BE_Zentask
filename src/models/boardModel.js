@@ -5,6 +5,7 @@ import { ObjectId } from "mongodb";
 import { BOARD_TYPES } from "../utils/constants";
 import { columnModel } from "./columnModel";
 import { cardModel } from "./cardModel";
+import { pagingSkipValue } from "../utils/algorithms";
 
 //Define Collection (Name & Schema)
 const BOARD_COLLECTION_NAME = "boards";
@@ -21,7 +22,18 @@ const BOARD_COLLECTION_SCHEMA = Joi.object({
             Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)
         )
         .default([]),
-
+    //admins của board
+    ownerIds: Joi.array()
+        .items(
+            Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)
+        )
+        .default([]),
+    //members của board
+    memberIds: Joi.array()
+        .items(
+            Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)
+        )
+        .default([]),
     createdAt: Joi.date().timestamp("javascript").default(Date.now),
     updatedAt: Joi.date().timestamp("javascript").default(null),
     _destroy: Joi.boolean().default(false),
@@ -165,6 +177,57 @@ const update = async (boardId, updateData) => {
     }
 };
 
+const getBoards = async (userId, page, itemsPerPage) => {
+    try {
+        const queryConditions = [
+            //ĐK 1: board chưa bị xóa
+            { _destroy: false },
+            //Đk 2: userId đang thực hiện request phải thuộc một trong 2 mảng ownerIds hoặc memberIds, sử dụng toán từ $all vủa mongodb
+            {
+                $or: [
+                    { ownerIds: { $all: [new ObjectId(userId)] } },
+                    { memberIds: { $all: [new ObjectId(userId)] } },
+                ],
+            },
+        ];
+        const query = await GET_DB()
+            .collection(BOARD_COLLECTION_NAME)
+            .aggregate(
+                [
+                    { $match: { $and: queryConditions } },
+                    //sort title của board theo A-Z
+                    { $sort: { title: 1 } },
+                    //$facet: xử lý nhiều luồng trong 1 query
+                    {
+                        $facet: {
+                            //Luồng 1: query boards
+                            queryBoards: [
+                                //Bỏ qua số lượng bản ghi của những page trước đó
+                                { $skip: pagingSkipValue(page, itemsPerPage) },
+                                //Gioi hạn số lượng bản ghi trên 1 trang là 12
+                                { $limit: itemsPerPage },
+                            ],
+                            //Luồng 2: query đến tổng tất cả số lượng bản ghi boards trong DB và trả về vào biến countedAllBoards
+                            queryTotalBoards: [{ $count: "countedAllBoards" }],
+                        },
+                    },
+                ],
+                //Khai báo thêm thuộc tính collation locale 'en' để fix chữ B hoa và sắp xếp trước a. bảng mã ASII
+                { collation: { locale: "en" } }
+            )
+            .toArray();
+        console.log(" query", query);
+
+        const res = query[0];
+        return {
+            boards: res.queryBoards || [],
+            totalBoards: res.queryTotalBoards[0]?.countedAllBoards || 0,
+        };
+    } catch (error) {
+        throw new Error(error);
+    }
+};
+
 export const boardModel = {
     BOARD_COLLECTION_NAME,
     BOARD_COLLECTION_SCHEMA,
@@ -174,4 +237,5 @@ export const boardModel = {
     pushColumnOrderIds,
     update,
     pullColumnOrderIds,
+    getBoards,
 };

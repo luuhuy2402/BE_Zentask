@@ -5,6 +5,7 @@ import { slugify } from "../utils/formatters";
 import { cloneDeep } from "lodash";
 import { columnModel } from "../models/columnModel";
 import { cardModel } from "../models/cardModel";
+import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_PAGE } from "../utils/constants";
 
 // xử lý logic : controller là xử lý điều hướng xong chuyển sang service
 const createNew = async (reqbody) => {
@@ -96,11 +97,25 @@ const moveCardToDifferentColumn = async (reqBody) => {
         await cardModel.update(reqBody.currentCardId, {
             columnId: reqBody.nextColumnId,
         });
-   
 
         return { updateResult: "Successfully" };
     } catch (error) {
-      
+        throw error;
+    }
+};
+
+const getBoards = async (userId, page, itemsPerPage) => {
+    try {
+        //nếu không tồn tại page. itemsPerPage gửi len thì gán gtri mặc định 
+        if (!page) page = DEFAULT_PAGE;
+        if (!itemsPerPage) itemsPerPage = DEFAULT_ITEMS_PER_PAGE;
+        const results = await boardModel.getBoards(
+            userId,
+            parseInt(page, 10),
+            parseInt(itemsPerPage, 10)
+        );
+        return results;
+    } catch (error) {
         throw error;
     }
 };
@@ -109,4 +124,5 @@ export const boardService = {
     getDetails,
     update,
     moveCardToDifferentColumn,
+    getBoards,
 };

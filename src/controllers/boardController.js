@@ -42,8 +42,23 @@ const moveCardToDifferentColumn = async (req, res, next) => {
 
         res.status(StatusCodes.OK).json(result);
     } catch (error) {
-        
         next(error); //sẽ nhảy sang file server vào phần xử lý lỗi tập trung
+    }
+};
+
+const getBoards = async (req, res, next) => {
+    try {
+        const userId = req.jwtDecoded._id;
+        //page và itemsPerPage được truyền vào trong query url từ FE nên BE lấy thông qua req.query
+        const { page, itemsPerPage } = req.query;
+        const results = await boardService.getBoards(
+            userId,
+            page,
+            itemsPerPage
+        );
+        res.status(StatusCodes.OK).json(results);
+    } catch (error) {
+        next(error);
     }
 };
 
@@ -52,4 +67,5 @@ export const boardController = {
     getDetails,
     update,
     moveCardToDifferentColumn,
+    getBoards,
 };
