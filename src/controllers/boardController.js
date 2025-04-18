@@ -4,8 +4,10 @@ import { boardService } from "../services/boardService";
 
 const creatNew = async (req, res, next) => {
     try {
+        const userId = req.jwtDecoded._id;
+
         //Điều hướng dữ liệu sang tầng Service
-        const createdBoard = await boardService.createNew(req.body);
+        const createdBoard = await boardService.createNew(userId, req.body);
 
         //Có kết quả thì trả về phía client
         res.status(StatusCodes.CREATED).json(createdBoard);

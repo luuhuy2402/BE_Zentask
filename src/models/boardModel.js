@@ -47,12 +47,17 @@ const validateBeforeCreate = async (data) => {
     });
 };
 
-const createNew = async (data) => {
+const createNew = async (userId, data) => {
     try {
         const validData = await validateBeforeCreate(data);
+
+        const newBoardToAdd = {
+            ...validData,
+            ownerIds: [new ObjectId(userId)],
+        };
         const createdBoard = await GET_DB()
             .collection(BOARD_COLLECTION_NAME)
-            .insertOne(validData);
+            .insertOne(newBoardToAdd);
         return createdBoard;
     } catch (error) {
         throw new Error(error);

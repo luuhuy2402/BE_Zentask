@@ -8,7 +8,7 @@ import { cardModel } from "../models/cardModel";
 import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_PAGE } from "../utils/constants";
 
 // xử lý logic : controller là xử lý điều hướng xong chuyển sang service
-const createNew = async (reqbody) => {
+const createNew = async (userId, reqbody) => {
     try {
         // Xử lý logic dữ liệu tùy đặc thù dự án
         const newBoard = {
@@ -17,7 +17,7 @@ const createNew = async (reqbody) => {
         };
 
         // Gọi tới tầng Model để xử lý lưu bản ghi newBoard vào trong Database
-        const createdBoard = await boardModel.createNew(newBoard);
+        const createdBoard = await boardModel.createNew(userId, newBoard);
 
         //Lấy bản ghi board sau khi gọi ( tùy mục đích dự án mà có cần bước này ko)
         const getNewBoard = await boardModel.findOneById(
