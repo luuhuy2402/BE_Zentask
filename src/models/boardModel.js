@@ -6,6 +6,7 @@ import { BOARD_TYPES } from "../utils/constants";
 import { columnModel } from "./columnModel";
 import { cardModel } from "./cardModel";
 import { pagingSkipValue } from "../utils/algorithms";
+import { userModel } from "./userModel";
 
 //Define Collection (Name & Schema)
 const BOARD_COLLECTION_NAME = "boards";
@@ -109,6 +110,32 @@ const getDetails = async (userId, boardId) => {
                         localField: "_id", //đây là id của board
                         foreignField: "boardId", //đây là id của board ở card( card thuộc board nào)
                         as: "cards",
+                    },
+                },
+                {
+                    $lookup: {
+                        from: userModel.USER_COLLECTION_NAME,
+                        localField: "ownerIds", //đây là owerIds của board
+                        foreignField: "_id", //đây là id user owr usermodel
+                        as: "owners", //trả về mảng có tên owners
+                        //pipeline trong lookup là để xử lý một hoặc nhiều luồng cần thiết
+                        //$project để chỉ định vài field không muốn lấy về bằng cách gán nó giá trị 0
+                        pipeline: [
+                            { $project: { password: 0, verifyToken: 0 } },
+                        ],
+                    },
+                },
+                {
+                    $lookup: {
+                        from: userModel.USER_COLLECTION_NAME,
+                        localField: "memberIds",
+                        foreignField: "_id",
+                        as: "members",
+                        //pipeline trong lookup là để xử lý một hoặc nhiều luồng cần thiết
+                        //$project để chỉ định vài field không muốn lấy về bằng cách gán nó giá trị 0
+                        pipeline: [
+                            { $project: { password: 0, verifyToken: 0 } },
+                        ],
                     },
                 },
             ])
