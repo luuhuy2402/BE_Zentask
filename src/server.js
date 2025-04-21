@@ -43,12 +43,21 @@ const START_SERVER = () => {
         inviteUserToBoardSocket(socket);
     });
 
-    //Dùng server.listen thay vì app.listen vì lúc này server đã bao gồm express app và đã config socket.io
-    server.listen(env.APP_PORT, env.APP_HOST, () => {
-        console.log(
-            `3.Back-end Server is running successfully at Host http://${env.APP_HOST}:${env.APP_PORT}/`
-        );
-    });
+    if (env.BUILD_MODE === "production") {
+        //Dùng server.listen thay vì app.listen vì lúc này server đã bao gồm express app và đã config socket.io
+        server.listen(process.env.PORT, () => {
+            console.log(
+                `3.Production: Back-end Server is running successfully at PORT:${process.env.PORT}`
+            );
+        });
+    } else {
+        //Dùng server.listen thay vì app.listen vì lúc này server đã bao gồm express app và đã config socket.io
+        server.listen(env.LOCAL_DEV_APP_PORT, env.LOCAL_DEV_APP_HOST, () => {
+            console.log(
+                `3.Back-end Server is running successfully at Host http://${env.LOCAL_DEV_APP_HOST}:${env.LOCAL_DEV_APP_PORT}/`
+            );
+        });
+    }
 
     //  Thực hiện các tác vụ cleanup trước khi dừng server
     exitHook(() => {
