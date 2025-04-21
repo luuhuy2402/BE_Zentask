@@ -4,6 +4,7 @@ import { GET_DB } from "../config/mongodb";
 import { ObjectId } from "mongodb";
 import { EMAIL_RULE, EMAIL_RULE_MESSAGE } from "../utils/validators";
 import commandConvert from "cross-env/src/command";
+import { CARD_MEMBER_ACTIONS } from "../utils/constants";
 
 // Define Collection (name & schema)
 const CARD_COLLECTION_NAME = "cards";
@@ -148,6 +149,37 @@ const unshiftNewComment = async (cardId, commentData) => {
         throw new Error(error);
     }
 };
+//Thêm hoặc xóa member khỏi card theo action
+const updateMembers = async (cardId, incomingMemberInfo) => {
+    try {
+        //Tạo ra biến updateCondition ban đầu là rỗng
+        let updateCondition = {};
+        if (incomingMemberInfo.action === CARD_MEMBER_ACTIONS.ADD) {
+            // console.log("Add incomingMemberInfo", incomingMemberInfo);
+            updateCondition = {
+                $push: { memberIds: new ObjectId(incomingMemberInfo.userId) },
+            };
+        }
+        if (incomingMemberInfo.action === CARD_MEMBER_ACTIONS.REMOVE) {
+            // console.log("Remove incomingMemberInfo", incomingMemberInfo);
+            updateCondition = {
+                $pull: { memberIds: new ObjectId(incomingMemberInfo.userId) },
+            };
+        }
+        const result = await GET_DB()
+            .collection(CARD_COLLECTION_NAME)
+            .findOneAndUpdate(
+                {
+                    _id: new ObjectId(cardId),
+                },
+                updateCondition,
+                { returnDocument: "after" }
+            );
+        return result;
+    } catch (error) {
+        throw new Error(error);
+    }
+};
 export const cardModel = {
     CARD_COLLECTION_NAME,
     CARD_COLLECTION_SCHEMA,
@@ -156,4 +188,5 @@ export const cardModel = {
     update,
     deleteManyByColumnId,
     unshiftNewComment,
+    updateMembers,
 };
