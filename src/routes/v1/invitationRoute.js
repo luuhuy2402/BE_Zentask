@@ -17,4 +17,9 @@ Router.route("/").get(
     invitationController.getInvitations
 );
 
+//Cập nhật mới bản ghi Board Invitation
+Router.route("/board/:invitationId").put(
+    authMiddleware.isAuthorized,
+    invitationController.updateBoardInvitation
+);
 export const invitationRoute = Router;
