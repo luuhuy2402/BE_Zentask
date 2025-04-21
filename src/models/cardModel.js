@@ -3,6 +3,7 @@ import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from "~/utils/validators";
 import { GET_DB } from "../config/mongodb";
 import { ObjectId } from "mongodb";
 import { EMAIL_RULE, EMAIL_RULE_MESSAGE } from "../utils/validators";
+import commandConvert from "cross-env/src/command";
 
 // Define Collection (name & schema)
 const CARD_COLLECTION_NAME = "cards";
@@ -128,6 +129,25 @@ const deleteManyByColumnId = async (columnId) => {
         throw new Error(error);
     }
 };
+/**Đẩy một phần tủ comment vào đầu mảng comments
+ * Trong JS ngược lại push là unshift
+ * Trong mongodb chỉ có $push- mặc định đẩy vào cuối mảng
+ * Vẫn dùng $push nhưng bọc data vào mảng để trong $each và chỉ định $position: 0
+ */
+const unshiftNewComment = async (cardId, commentData) => {
+    try {
+        const result = await GET_DB()
+            .collection(CARD_COLLECTION_NAME)
+            .findOneAndUpdate(
+                { _id: new ObjectId(cardId) },
+                { $push: { comments: { $each: [commentData], $position: 0 } } },
+                { returnDocument: "after" }
+            );
+        return result;
+    } catch (error) {
+        throw new Error(error);
+    }
+};
 export const cardModel = {
     CARD_COLLECTION_NAME,
     CARD_COLLECTION_SCHEMA,
@@ -135,4 +155,5 @@ export const cardModel = {
     findOneById,
     update,
     deleteManyByColumnId,
+    unshiftNewComment,
 };

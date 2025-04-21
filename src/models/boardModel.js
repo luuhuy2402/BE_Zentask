@@ -15,7 +15,7 @@ const BOARD_COLLECTION_SCHEMA = Joi.object({
     slug: Joi.string().required().min(3).trim().strict(),
     description: Joi.string().required().min(3).max(256).trim().strict(),
     type: Joi.string()
-        .valid(BOARD_TYPES.PUBLIC, BOARD_TYPES.PRIVATE)
+        .valid(...Object.values(BOARD_TYPES))
         .required(),
 
     columnOrderIds: Joi.array()
