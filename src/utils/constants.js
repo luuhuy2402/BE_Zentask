@@ -2,8 +2,9 @@ import { env } from "../config/environment";
 
 // Những domain được phép truy cập vào tài nguyên của Server
 export const WHITELIST_DOMAINS = [
-    //ko cần localhost nuwav gì file cors luôn cho phép môi trường dev 
+    //ko cần localhost nuwav gì file cors luôn cho phép môi trường dev
     // "http://localhost:5173"
+    "https://zentask-web.vercel.app/",
 ];
 
 export const BOARD_TYPES = {
