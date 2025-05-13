@@ -8,7 +8,6 @@ const isAuthorized = async (req, res, next) => {
     //Lấy accessToken nằm trong request cookies phía client cấu vs withCredentials trong file authorizeAxios
     const clientAccessToken = req.cookies?.accessToken;
 
-    //Nếu như clientAccessToken không tồn tại thì trả về lỗi
     if (!clientAccessToken) {
         next(
             new ApiError(
@@ -19,7 +18,6 @@ const isAuthorized = async (req, res, next) => {
         return;
     }
     try {
-        //Thực hiện giải mã token xem có hợp lệ không
         const accessTokenDecoded = await JwtProvider.verifyToken(
             clientAccessToken,
             env.ACCESS_TOKEN_SECRET_SIGNATURE
@@ -27,8 +25,6 @@ const isAuthorized = async (req, res, next) => {
         // console.log(accessTokenDecoded);
         //Nếu như token hợp lệ thì lưu thông in giải mã được và req.jwtDecoded, để sử dụng cho các tầng cần xử lý ở phía sau
         req.jwtDecoded = accessTokenDecoded;
-
-        //Cho phép request đi tiếp
         next();
     } catch (error) {
         // console.log("authMiddleware", error);

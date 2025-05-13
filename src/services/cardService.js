@@ -12,7 +12,6 @@ const createNew = async (reqbody) => {
 
         const getNewCard = await cardModel.findOneById(createdCard.insertedId);
         if (getNewCard) {
-            //Cập nhật mảng cardOrderIds trong collecton columns
             await columnModel.pushCardOrderIds(getNewCard);
         }
 
@@ -38,7 +37,6 @@ const update = async (cardId, reqBody, cardCoverFile, userInfo) => {
                 cover: uploadResult.secure_url,
             });
         } else if (updateData.commentToAdd) {
-            //Tạo dữ liệu comment để thêm vào DB
             const commentData = {
                 ...updateData.commentToAdd,
                 commentedAt: Date.now(),

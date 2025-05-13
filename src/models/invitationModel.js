@@ -6,7 +6,6 @@ import { GET_DB } from "../config/mongodb";
 import { userModel } from "./userModel";
 import { boardModel } from "./boardModel";
 
-// Define Collection (name & schema)
 const INVITATION_COLLECTION_NAME = "invitations";
 const INVITATION_COLLECTION_SCHEMA = Joi.object({
     inviterId: Joi.string()
@@ -37,7 +36,6 @@ const INVITATION_COLLECTION_SCHEMA = Joi.object({
     _destroy: Joi.boolean().default(false),
 });
 
-//Chỉ đinh các field không cho phép update trong hàm update
 const INVALID_UPDATE_FIELDS = [
     "_id",
     "inviterId",
@@ -67,7 +65,6 @@ const createNewBoardInvitation = async (data) => {
                 boardId: new ObjectId(validData.boardInvitation.boardId),
             };
         }
-        //gọi insert vào DB
         const createdInvitation = await GET_DB()
             .collection(INVITATION_COLLECTION_NAME)
             .insertOne(newInvitationToAdd);
@@ -92,14 +89,12 @@ const findOneById = async (invitationId) => {
 
 const update = async (invitationId, updateData) => {
     try {
-        //Loại bỏ các field không cho phép update
         Object.keys(updateData).forEach((filedName) => {
             if (INVALID_UPDATE_FIELDS.includes(filedName)) {
                 delete updateData[filedName];
             }
         });
 
-        //Đối với những dữ liệu liên quan đến ObjectID
         if (updateData.boardInvitation) {
             updateData.boardInvitation = {
                 ...updateData.boardInvitation,

@@ -35,12 +35,12 @@ const update = async (req, res, next) => {
         description: Joi.string().optional(),
     });
     try {
-        //SET abortEarly flase để có nhiều lỗi validation thì trả về tất cả lỗi
+       
         await correctCondition.validateAsync(req.body, {
             abortEarly: false,
             allowUnknown: true,
         });
-        //validate dữ liệu hợp lệ thì cho request đi tiếp sang controller
+       
         next();
     } catch (error) {
         const errorMessage = new Error(error).message;
@@ -48,7 +48,7 @@ const update = async (req, res, next) => {
             StatusCodes.UNPROCESSABLE_ENTITY,
             errorMessage
         );
-        next(customError); //sẽ nhảy sang file server vào phần xử lý lỗi tập trung
+        next(customError); 
     }
 };
 

@@ -26,24 +26,19 @@ const creatNew = async (req, res, next) => {
 };
 
 const update = async (req, res, next) => {
-    //Chú ý ko dùng require khi update
     const correctCondition = Joi.object({
-        //làm di chuyển column sang board khác mới cần validate boarId
-        // boardId: Joi.string()
-        //     .pattern(OBJECT_ID_RULE)
-        //     .message(OBJECT_ID_RULE_MESSAGE),
         title: Joi.string().min(3).max(50).trim().strict(),
         cardOrderIds: Joi.array().items(
             Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)
         ),
     });
     try {
-        //SET abortEarly flase để có nhiều lỗi validation thì trả về tất cả lỗi
+   
         await correctCondition.validateAsync(req.body, {
             abortEarly: false,
             allowUnknown: true,
         });
-        //validate dữ liệu hợp lệ thì cho request đi tiếp sang controller
+       
         next();
     } catch (error) {
         const errorMessage = new Error(error).message;
@@ -51,7 +46,7 @@ const update = async (req, res, next) => {
             StatusCodes.UNPROCESSABLE_ENTITY,
             errorMessage
         );
-        next(customError); //sẽ nhảy sang file server vào phần xử lý lỗi tập trung
+        next(customError);
     }
 };
 
@@ -65,7 +60,7 @@ const deleteItem = async (req, res, next) => {
     });
     try {
         await correctCondition.validateAsync(req.params);
-        //validate dữ liệu hợp lệ thì cho request đi tiếp sang controller
+     
         next();
     } catch (error) {
         const errorMessage = new Error(error).message;
@@ -73,7 +68,7 @@ const deleteItem = async (req, res, next) => {
             StatusCodes.UNPROCESSABLE_ENTITY,
             errorMessage
         );
-        next(customError); //sẽ nhảy sang file server vào phần xử lý lỗi tập trung
+        next(customError); 
     }
 };
 export const columnValidation = { creatNew, update, deleteItem };

@@ -3,7 +3,6 @@ import { invitationService } from "../services/invitationService";
 
 const createNewBoardInvitation = async (req, res, next) => {
     try {
-        //User thục hiện request này là Inviter - người đi mời
         const inviterId = req.jwtDecoded._id;
         const resInvitation = await invitationService.createNewBoardInvitation(
             req.body,

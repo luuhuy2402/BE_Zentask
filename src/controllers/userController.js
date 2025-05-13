@@ -50,7 +50,7 @@ const login = async (req, res, next) => {
 
 const logout = async (req, res, next) => {
     try {
-        // Xóa cookie
+
         res.clearCookie("accessToken");
         res.clearCookie("refreshToken");
 
@@ -83,7 +83,7 @@ const refreshToken = async (req, res, next) => {
 
 const update = async (req, res, next) => {
     try {
-        const userId = req.jwtDecoded._id; // jwtDecoded được lưu vào request từ tầng Middleware
+        const userId = req.jwtDecoded._id;
 
         const userAvatarFile = req.file;
         // console.log("Controller > userAvartarFile ", userAvatarFile);

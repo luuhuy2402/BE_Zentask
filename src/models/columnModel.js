@@ -3,7 +3,6 @@ import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from "../utils/validators";
 import { GET_DB } from "../config/mongodb";
 import { ObjectId } from "mongodb";
 
-// Define Collection (name & schema)
 const COLUMN_COLLECTION_NAME = "columns";
 const COLUMN_COLLECTION_SCHEMA = Joi.object({
     boardId: Joi.string()
@@ -11,8 +10,6 @@ const COLUMN_COLLECTION_SCHEMA = Joi.object({
         .pattern(OBJECT_ID_RULE)
         .message(OBJECT_ID_RULE_MESSAGE),
     title: Joi.string().required().min(3).max(50).trim().strict(),
-
-    // Lưu ý các item trong mảng cardOrderIds là ObjectId nên cần thêm pattern cho chuẩn nhé, (lúc quay video số 57 mình quên nhưng sang đầu video số 58 sẽ có nhắc lại về cái này.)
     cardOrderIds: Joi.array()
         .items(
             Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)
@@ -24,7 +21,6 @@ const COLUMN_COLLECTION_SCHEMA = Joi.object({
     _destroy: Joi.boolean().default(false),
 });
 
-//Chỉ đinh các field không cho phép update trong hàm update
 const INVALID_UPDATE_FIELDS = ["_id", "boardId", "createdAt"];
 
 const validateBeforeCreate = async (data) => {
@@ -62,7 +58,6 @@ const findOneById = async (columnId) => {
     }
 };
 
-//nhiệm vụ là push cardId vào cuối mảng cardOrderIds
 const pushCardOrderIds = async (card) => {
     try {
         const result = await GET_DB()
@@ -80,14 +75,11 @@ const pushCardOrderIds = async (card) => {
 
 const update = async (columnId, updateData) => {
     try {
-        //Loại bỏ các field không cho phép update
         Object.keys(updateData).forEach((filedName) => {
             if (INVALID_UPDATE_FIELDS.includes(filedName)) {
                 delete updateData[filedName];
             }
         });
-
-        //Đối với những dữ liệu liên quan đến ObjectID
         if (updateData.cardOrderIds) {
             updateData.cardOrderIds = updateData.cardOrderIds.map(
                 (_id) => new ObjectId(_id)

@@ -8,7 +8,6 @@ import { cardModel } from "./cardModel";
 import { pagingSkipValue } from "../utils/algorithms";
 import { userModel } from "./userModel";
 
-//Define Collection (Name & Schema)
 const BOARD_COLLECTION_NAME = "boards";
 const BOARD_COLLECTION_SCHEMA = Joi.object({
     title: Joi.string().required().min(3).max(50).trim().strict(),
@@ -23,13 +22,11 @@ const BOARD_COLLECTION_SCHEMA = Joi.object({
             Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)
         )
         .default([]),
-    //admins của board
     ownerIds: Joi.array()
         .items(
             Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)
         )
         .default([]),
-    //members của board
     memberIds: Joi.array()
         .items(
             Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)
@@ -39,7 +36,7 @@ const BOARD_COLLECTION_SCHEMA = Joi.object({
     updatedAt: Joi.date().timestamp("javascript").default(null),
     _destroy: Joi.boolean().default(false),
 });
-//Chỉ đinh các field không cho phép update trong hàm update
+
 const INVALID_UPDATE_FIELDS = ["_id", "createdAt"];
 
 const validateBeforeCreate = async (data) => {
@@ -146,11 +143,6 @@ const getDetails = async (userId, boardId) => {
         throw new Error(error);
     }
 };
-
-/**
- * Đẩy một phần tử columnId vào cuối mảng ColumnOrderIds
- * Dùng $push để đẩy 1 phần tử vào cuối mảng
- */
 const pushColumnOrderIds = async (column) => {
     try {
         const result = await GET_DB()
@@ -166,11 +158,6 @@ const pushColumnOrderIds = async (column) => {
     }
 };
 
-/**
- *  Lấy một phần tử columnId ra khỏi mảng columnOrderIds
- * Dùng $pull để lấy một phần tử ra khỏi mảng
- * rồi xóa nó đi
- */
 const pullColumnOrderIds = async (column) => {
     try {
         const result = await GET_DB()
@@ -188,14 +175,12 @@ const pullColumnOrderIds = async (column) => {
 
 const update = async (boardId, updateData) => {
     try {
-        //Loại bỏ các field không cho phép update
         Object.keys(updateData).forEach((filedName) => {
             if (INVALID_UPDATE_FIELDS.includes(filedName)) {
                 delete updateData[filedName];
             }
         });
 
-        //Đối với những dữ liệu liên quan đến ObjectID
         if (updateData.columnOrderIds) {
             updateData.columnOrderIds = updateData.columnOrderIds.map(
                 (_id) => new ObjectId(_id)

@@ -3,13 +3,12 @@ import { EMAIL_RULE, EMAIL_RULE_MESSAGE } from "../utils/validators";
 import { GET_DB } from "../config/mongodb";
 import { ObjectId } from "mongodb";
 
-//Define tạm 2 roles cho user tùy việc mỏ rộng dự án nào mà có thể thêm role
 const USER_ROLES = {
     CLIENT: "client",
     ADMIN: "admin",
 };
 
-//Define Collection (name & schema)
+
 const USER_COLLECTION_NAME = "users";
 const USER_COLLECTION_SCHEMA = Joi.object({
     email: Joi.string()
@@ -33,7 +32,6 @@ const USER_COLLECTION_SCHEMA = Joi.object({
     _destroy: Joi.boolean().default(false),
 });
 
-//Chỉ đinh các field không cho phép update trong hàm update
 const INVALID_UPDATE_FIELDS = ["_id", "email", "username", "createdAt"];
 
 const validateBeforeCreate = async (data) => {
@@ -81,7 +79,6 @@ const findOneByEmail = async (emailValue) => {
 
 const update = async (userId, updateData) => {
     try {
-        //Loại bỏ các field không cho phép update
         Object.keys(updateData).forEach((filedName) => {
             if (INVALID_UPDATE_FIELDS.includes(filedName)) {
                 delete updateData[filedName];

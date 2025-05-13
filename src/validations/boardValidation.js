@@ -4,14 +4,7 @@ import ApiError from "../utils/ApiError";
 import { BOARD_TYPES } from "../utils/constants";
 import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from "../utils/validators";
 
-// validate dữ liệu từ FE gửi lên
 const creatNew = async (req, res, next) => {
-    /**
-     * Mặc định chúng ta ko cần phải custom message ở phía BE làm gì vì để cho frontend tự validate và custom message phía FE cho đẹp
-     * Back end chỉ vần validate đảm bảo dữ liệu chuẩn xác và trả về message mặc định từ thư viện là được
-     * Quan trọng: Việc validate dữ liệu bắt buộc phải có ở phía BE vì đây là điểm cuối để lưu trữ dữ liệu vào database
-     * Và thông thường trong thực tế điều tốt nhất cho hệ thống là hãy luôn validate dữ liệu ở cả BE và FE
-     */
     const correctCondition = Joi.object({
         title: Joi.string().required().min(3).max(50).trim().strict().message({
             "any.required": "Title is required",
@@ -26,9 +19,8 @@ const creatNew = async (req, res, next) => {
             .required(),
     });
     try {
-        //SET abortEarly flase để có nhiều lỗi validation thì trả về tất cả lỗi
         await correctCondition.validateAsync(req.body, { abortEarly: false });
-        //validate dữ liệu hợp lệ thì cho request đi tiếp sang controller
+
         next();
     } catch (error) {
         const errorMessage = new Error(error).message;
@@ -36,7 +28,7 @@ const creatNew = async (req, res, next) => {
             StatusCodes.UNPROCESSABLE_ENTITY,
             errorMessage
         );
-        next(customError); //sẽ nhảy sang file server vào phần xử lý lỗi tập trung
+        next(customError);
     }
 };
 
@@ -46,24 +38,22 @@ const update = async (req, res, next) => {
         title: Joi.string().min(3).max(50).trim().strict().message({}),
         description: Joi.string().min(3).max(256).trim().strict(),
         type: Joi.string().valid(BOARD_TYPES.PUBLIC, BOARD_TYPES.PRIVATE),
-        // thêm field columnOrderIds vào cũng được( thêm chắc chắn)
-        // columnOrderIds: Joi.array()
-        //     .items(
-        //         Joi.string()
-        //             .pattern(OBJECT_ID_RULE)
-        //             .message(OBJECT_ID_RULE_MESSAGE)
-        //     )
-        //     .default([]),
+        columnOrderIds: Joi.array()
+            .items(
+                Joi.string()
+                    .pattern(OBJECT_ID_RULE)
+                    .message(OBJECT_ID_RULE_MESSAGE)
+            )
+            .default([]),
     });
     try {
-        //SET abortEarly flase để có nhiều lỗi validation thì trả về tất cả lỗi
+    
         await correctCondition.validateAsync(req.body, {
             abortEarly: false,
-            //Khi update thì cho phép Unknown để cho phép update các field khác mà chưa được định nghĩa trong trường hợp này
-            //mk đang đẩy lên field columnOrderIds
+            
             allowUnknown: true,
         });
-        //validate dữ liệu hợp lệ thì cho request đi tiếp sang controller
+  
         next();
     } catch (error) {
         const errorMessage = new Error(error).message;
@@ -71,7 +61,7 @@ const update = async (req, res, next) => {
             StatusCodes.UNPROCESSABLE_ENTITY,
             errorMessage
         );
-        next(customError); //sẽ nhảy sang file server vào phần xử lý lỗi tập trung
+        next(customError); 
     }
 };
 
@@ -105,12 +95,12 @@ const moveCardToDifferentColumn = async (req, res, next) => {
             ),
     });
     try {
-        //SET abortEarly flase để có nhiều lỗi validation thì trả về tất cả lỗi
+       
         await correctCondition.validateAsync(req.body, {
             abortEarly: false,
         });
         console.log("validation");
-        //validate dữ liệu hợp lệ thì cho request đi tiếp sang controller
+      
         next();
     } catch (error) {
         const errorMessage = new Error(error).message;
@@ -118,8 +108,8 @@ const moveCardToDifferentColumn = async (req, res, next) => {
             StatusCodes.UNPROCESSABLE_ENTITY,
             errorMessage
         );
-      
-        next(customError); //sẽ nhảy sang file server vào phần xử lý lỗi tập trung
+
+        next(customError);
     }
 };
 

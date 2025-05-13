@@ -49,7 +49,6 @@ const CARD_COLLECTION_SCHEMA = Joi.object({
     _destroy: Joi.boolean().default(false),
 });
 
-//Chỉ đinh các field không cho phép update trong hàm update
 const INVALID_UPDATE_FIELDS = ["_id", "boardId", "createdAt"];
 
 const validateBeforeCreate = async (data) => {
@@ -61,8 +60,6 @@ const validateBeforeCreate = async (data) => {
 const createNew = async (data) => {
     try {
         const validData = await validateBeforeCreate(data);
-
-        //Biến đổi một số dữ liệu liên quan tới object chuẩn
         const newCardToAdd = {
             ...validData,
             boardId: new ObjectId(validData.boardId),
@@ -93,7 +90,6 @@ const findOneById = async (cardId) => {
 
 const update = async (cardId, updateData) => {
     try {
-        //Loại bỏ các field không cho phép update
         Object.keys(updateData).forEach((filedName) => {
             if (INVALID_UPDATE_FIELDS.includes(filedName)) {
                 delete updateData[filedName];
@@ -121,7 +117,7 @@ const deleteManyByColumnId = async (columnId) => {
         const result = await GET_DB()
             .collection(CARD_COLLECTION_NAME)
             .deleteMany({
-                columnId: new ObjectId(columnId), //như là điều kiện khi xóa
+                columnId: new ObjectId(columnId),
             });
         // console.log("🚀 ~ deleteManyByColumnId ~ result:", result);
 
@@ -130,11 +126,6 @@ const deleteManyByColumnId = async (columnId) => {
         throw new Error(error);
     }
 };
-/**Đẩy một phần tủ comment vào đầu mảng comments
- * Trong JS ngược lại push là unshift
- * Trong mongodb chỉ có $push- mặc định đẩy vào cuối mảng
- * Vẫn dùng $push nhưng bọc data vào mảng để trong $each và chỉ định $position: 0
- */
 const unshiftNewComment = async (cardId, commentData) => {
     try {
         const result = await GET_DB()
@@ -152,7 +143,6 @@ const unshiftNewComment = async (cardId, commentData) => {
 //Thêm hoặc xóa member khỏi card theo action
 const updateMembers = async (cardId, incomingMemberInfo) => {
     try {
-        //Tạo ra biến updateCondition ban đầu là rỗng
         let updateCondition = {};
         if (incomingMemberInfo.action === CARD_MEMBER_ACTIONS.ADD) {
             // console.log("Add incomingMemberInfo", incomingMemberInfo);

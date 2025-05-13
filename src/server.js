@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import exitHook from "async-exit-hook";
-import { CLOSE_DB, CONNECT_DB, GET_DB } from "./config/mongodb";
+import { CLOSE_DB, CONNECT_DB } from "./config/mongodb";
 import { env } from "./config/environment";
 import { APIs_V1 } from "./routes/v1";
 import { errorHandlingMiddleware } from "./middlewares/errorHandlingMiddleware";
@@ -58,15 +58,12 @@ const START_SERVER = () => {
             );
         });
     }
-
-    //  Thực hiện các tác vụ cleanup trước khi dừng server
     exitHook(() => {
         console.log("4. Disconnecting from MongoDB Cloud Atlas");
         CLOSE_DB();
     });
 };
 
-//Cách 1: Chỉ khi kết nối tới Database thành công thì mới Start Server Back-end lên
 //IIFE
 (async () => {
     try {
@@ -80,13 +77,3 @@ const START_SERVER = () => {
         process.exit(0); //nếu có lõi thì dừng server
     }
 })();
-
-//Cách 2: Chỉ khi kết nối tới Database thành công thì mới Start Server Back-end lên
-// console.log("1. Connecting to MongoDB Cloud");
-// CONNECT_DB()
-//     .then(() => console.log("2. Connected to MongoDB Cloud"))
-//     .then(() => START_SERVER())
-//     .catch((error) => {
-//         console.error(error);
-//         process.exit(0); //nếu có lõi thì dừng server
-//     });

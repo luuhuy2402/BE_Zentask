@@ -18,7 +18,7 @@ const update = async (req, res, next) => {
 
         res.status(StatusCodes.OK).json(updatedColumn);
     } catch (error) {
-        next(error); //sẽ nhảy sang file server vào phần xử lý lỗi tập trung
+        next(error); 
     }
 };
 
@@ -29,7 +29,7 @@ const deleteItem = async (req, res, next) => {
 
         res.status(StatusCodes.OK).json(result);
     } catch (error) {
-        next(error); //sẽ nhảy sang file server vào phần xử lý lỗi tập trung
+        next(error); 
     }
 };
 export const columnController = { creatNew, update, deleteItem };
