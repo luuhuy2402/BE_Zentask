@@ -3,7 +3,7 @@ import { userService } from "../services/userService";
 import ms from "ms";
 import ApiError from "../utils/ApiError";
 
-const creatNew = async (req, res, next) => {
+const createNew = async (req, res, next) => {
     try {
         const createdUser = await userService.createNew(req.body);
 
@@ -50,7 +50,6 @@ const login = async (req, res, next) => {
 
 const logout = async (req, res, next) => {
     try {
-
         res.clearCookie("accessToken");
         res.clearCookie("refreshToken");
 
@@ -99,7 +98,7 @@ const update = async (req, res, next) => {
     }
 };
 export const userController = {
-    creatNew,
+    createNew,
     verifyAccount,
     login,
     logout,

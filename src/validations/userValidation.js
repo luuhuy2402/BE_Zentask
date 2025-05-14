@@ -8,7 +8,7 @@ import {
 } from "../utils/validators";
 import ApiError from "../utils/ApiError";
 
-const creatNew = async (req, res, next) => {
+const createNew = async (req, res, next) => {
     const correctCondition = Joi.object({
         email: Joi.string()
             .required()
@@ -109,4 +109,4 @@ const update = async (req, res, next) => {
     }
 };
 
-export const userValidation = { creatNew, login, verifyAccount, update };
+export const userValidation = { createNew, login, verifyAccount, update };

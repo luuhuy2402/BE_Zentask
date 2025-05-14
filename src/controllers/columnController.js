@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import { columnService } from "../services/columnService";
 
-const creatNew = async (req, res, next) => {
+const createNew = async (req, res, next) => {
     try {
         const createdColumn = await columnService.createNew(req.body);
 
@@ -18,7 +18,7 @@ const update = async (req, res, next) => {
 
         res.status(StatusCodes.OK).json(updatedColumn);
     } catch (error) {
-        next(error); 
+        next(error);
     }
 };
 
@@ -29,7 +29,7 @@ const deleteItem = async (req, res, next) => {
 
         res.status(StatusCodes.OK).json(result);
     } catch (error) {
-        next(error); 
+        next(error);
     }
 };
-export const columnController = { creatNew, update, deleteItem };
+export const columnController = { createNew, update, deleteItem };

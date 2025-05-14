@@ -8,8 +8,8 @@ const Router = express.Router();
 
 Router.route("/").post(
     authMiddleware.isAuthorized,
-    cardValidation.creatNew,
-    cardController.creatNew
+    cardValidation.createNew,
+    cardController.createNew
 );
 
 Router.route("/:id").put(

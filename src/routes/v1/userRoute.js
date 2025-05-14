@@ -6,8 +6,8 @@ import { multerUpLoadMiddleware } from "../../middlewares/multerUploadMiddleware
 
 const Router = express.Router();
 Router.route("/register").post(
-    userValidation.creatNew,
-    userController.creatNew
+    userValidation.createNew,
+    userController.createNew
 );
 
 Router.route("/verify").put(

@@ -9,8 +9,8 @@ Router.route("/")
     .get(authMiddleware.isAuthorized, boardController.getBoards)
     .post(
         authMiddleware.isAuthorized,
-        boardValidation.creatNew,
-        boardController.creatNew
+        boardValidation.createNew,
+        boardController.createNew
     );
 
 Router.route("/:id")

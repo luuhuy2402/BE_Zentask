@@ -3,7 +3,7 @@ import Joi from "joi";
 import ApiError from "../utils/ApiError";
 import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from "../utils/validators";
 
-const creatNew = async (req, res, next) => {
+const createNew = async (req, res, next) => {
     const correctCondition = Joi.object({
         boardId: Joi.string()
             .required()
@@ -35,12 +35,11 @@ const update = async (req, res, next) => {
         description: Joi.string().optional(),
     });
     try {
-       
         await correctCondition.validateAsync(req.body, {
             abortEarly: false,
             allowUnknown: true,
         });
-       
+
         next();
     } catch (error) {
         const errorMessage = new Error(error).message;
@@ -48,8 +47,8 @@ const update = async (req, res, next) => {
             StatusCodes.UNPROCESSABLE_ENTITY,
             errorMessage
         );
-        next(customError); 
+        next(customError);
     }
 };
 
-export const cardValidation = { creatNew, update };
+export const cardValidation = { createNew, update };

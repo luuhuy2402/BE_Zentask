@@ -8,8 +8,8 @@ const Router = express.Router();
 
 Router.route("/").post(
     authMiddleware.isAuthorized,
-    columnValidation.creatNew,
-    columnController.creatNew
+    columnValidation.createNew,
+    columnController.createNew
 );
 Router.route("/:id")
     .put(

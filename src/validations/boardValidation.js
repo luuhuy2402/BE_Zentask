@@ -4,7 +4,7 @@ import ApiError from "../utils/ApiError";
 import { BOARD_TYPES } from "../utils/constants";
 import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from "../utils/validators";
 
-const creatNew = async (req, res, next) => {
+const createNew = async (req, res, next) => {
     const correctCondition = Joi.object({
         title: Joi.string().required().min(3).max(50).trim().strict().message({
             "any.required": "Title is required",
@@ -47,13 +47,12 @@ const update = async (req, res, next) => {
             .default([]),
     });
     try {
-    
         await correctCondition.validateAsync(req.body, {
             abortEarly: false,
-            
+
             allowUnknown: true,
         });
-  
+
         next();
     } catch (error) {
         const errorMessage = new Error(error).message;
@@ -61,7 +60,7 @@ const update = async (req, res, next) => {
             StatusCodes.UNPROCESSABLE_ENTITY,
             errorMessage
         );
-        next(customError); 
+        next(customError);
     }
 };
 
@@ -95,12 +94,11 @@ const moveCardToDifferentColumn = async (req, res, next) => {
             ),
     });
     try {
-       
         await correctCondition.validateAsync(req.body, {
             abortEarly: false,
         });
         console.log("validation");
-      
+
         next();
     } catch (error) {
         const errorMessage = new Error(error).message;
@@ -113,4 +111,4 @@ const moveCardToDifferentColumn = async (req, res, next) => {
     }
 };
 
-export const boardValidation = { creatNew, update, moveCardToDifferentColumn };
+export const boardValidation = { createNew, update, moveCardToDifferentColumn };
