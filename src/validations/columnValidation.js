@@ -50,7 +50,6 @@ const update = async (req, res, next) => {
 };
 
 const deleteItem = async (req, res, next) => {
-    //Chú ý ko dùng require khi update
     const correctCondition = Joi.object({
         id: Joi.string()
             .required()

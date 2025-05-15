@@ -63,7 +63,27 @@ const update = async (cardId, reqBody, cardCoverFile, userInfo) => {
         throw error;
     }
 };
+
+const deleteItem = async (cardId) => {
+    try {
+        const targetCard = await cardModel.findOneById(cardId);
+        if (!targetCard) {
+            throw new ApiError(StatusCodes.NOT_FOUND, "Card not found!");
+        }
+        //Xóa column
+        await cardModel.deleteOneById(cardId);
+
+        //Xóa columnId trong mảng columnOrderIds của Board chứa column xóa
+        // await boardModel.pullColumnOrderIds(targetColumn);
+        await columnModel.pullCardOrderIds(targetCard);
+
+        return { deleteResult: "Card deleted successfully" };
+    } catch (error) {
+        throw error;
+    }
+};
 export const cardService = {
     createNew,
     update,
+    deleteItem,
 };

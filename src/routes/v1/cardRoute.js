@@ -12,10 +12,16 @@ Router.route("/").post(
     cardController.createNew
 );
 
-Router.route("/:id").put(
-    authMiddleware.isAuthorized,
-    multerUpLoadMiddleware.upload.single("cardCover"),
-    cardValidation.update,
-    cardController.update
-);
+Router.route("/:id")
+    .put(
+        authMiddleware.isAuthorized,
+        multerUpLoadMiddleware.upload.single("cardCover"),
+        cardValidation.update,
+        cardController.update
+    )
+    .delete(
+        authMiddleware.isAuthorized,
+        cardValidation.deleteItem,
+        cardController.deleteItem
+    );
 export const cardRoute = Router;
