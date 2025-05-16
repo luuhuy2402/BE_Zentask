@@ -89,6 +89,19 @@ const findOneById = async (cardId) => {
     }
 };
 
+const findOneByUserId = async (userId) => {
+    try {
+        const result = await GET_DB()
+            .collection(CARD_COLLECTION_NAME)
+            .find({
+                memberIds: new ObjectId(userId),
+            })
+            .toArray();
+        return result;
+    } catch (error) {
+        throw new Error(error);
+    }
+};
 const update = async (cardId, updateData) => {
     try {
         Object.keys(updateData).forEach((filedName) => {
@@ -205,6 +218,7 @@ const unshiftAttachment = async (cardId, attachmentFile) => {
         throw new Error(error);
     }
 };
+
 export const cardModel = {
     CARD_COLLECTION_NAME,
     CARD_COLLECTION_SCHEMA,
@@ -216,4 +230,5 @@ export const cardModel = {
     updateMembers,
     deleteOneById,
     unshiftAttachment,
+    findOneByUserId,
 };

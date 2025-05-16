@@ -1,5 +1,6 @@
 import { cardModel } from "../models/cardModel";
 import { columnModel } from "../models/columnModel";
+import { userModel } from "../models/userModel";
 import { CloudinaryProvider } from "../providers/CloudinaryProvider";
 
 const createNew = async (reqbody) => {
@@ -59,7 +60,6 @@ const update = async (
             updatedCard = await cardModel.unshiftAttachment(
                 cardId,
                 uploadResult.secure_url
-                
             );
             // console.log("updatedCard", updatedCard);
         } else if (updateData.commentToAdd) {

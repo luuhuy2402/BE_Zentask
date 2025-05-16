@@ -9,6 +9,8 @@ import { BrevoProvider } from "../providers/BrevoProvider";
 import { JwtProvider } from "../providers/JwtProvider";
 import { env } from "../config/environment";
 import { CloudinaryProvider } from "../providers/CloudinaryProvider";
+import { cardModel } from "../models/cardModel";
+import { isEmpty } from "lodash";
 
 const createNew = async (reqBody) => {
     try {
@@ -156,6 +158,8 @@ const refreshToken = async (clientRefreshToken) => {
     }
 };
 const update = async (userId, reqBody, userAvatarFile) => {
+    const cards = await cardModel.findOneByUserId(userId);
+
     try {
         /**Query User và kiểm tra */
         const existUser = await userModel.findOneById(userId);
@@ -198,10 +202,71 @@ const update = async (userId, reqBody, userAvatarFile) => {
             updatedUser = await userModel.update(userId, {
                 avatar: uploadResult.secure_url,
             });
+
+            if (cards && cards.length > 0) {
+                const updatePromises = [];
+
+                for (const card of cards) {
+                    if (card.comments && card.comments.length > 0) {
+                        const updatedComments = card.comments.map((comment) => {
+                            if (comment.userId === userId) {
+                                return {
+                                    ...comment,
+                                    userAvatar: uploadResult.secure_url,
+                                };
+                            }
+                            return comment;
+                        });
+
+                        updatePromises.push(
+                            cardModel.update(card._id, {
+                                comments: updatedComments,
+                            })
+                        );
+                    }
+                }
+
+                // Đợi tất cả các thao tác cập nhật hoàn thành
+                if (updatePromises.length > 0) {
+                    await Promise.all(updatePromises);
+                }
+            }
         } else {
             //TH update các thông tin chung như displayname
             updatedUser = await userModel.update(userId, reqBody);
+            console.log("reqBody:", reqBody);
+
+            if (cards && cards.length > 0 && reqBody.displayName) {
+                const updatePromises = [];
+
+                for (const card of cards) {
+                    if (card.comments && card.comments.length > 0) {
+                        const updatedComments = card.comments.map((comment) => {
+                            if (comment.userId === userId) {
+                                return {
+                                    ...comment,
+                                    userDisplayName: reqBody.displayName,
+                                };
+                            }
+                            return comment;
+                        });
+
+                        updatePromises.push(
+                            cardModel.update(card._id, {
+                                comments: updatedComments,
+                            })
+                        );
+                    }
+                }
+
+                // Đợi tất cả các thao tác cập nhật hoàn thành
+                if (updatePromises.length > 0) {
+                    await Promise.all(updatePromises);
+                }
+            }
         }
+
+        // console.log("cards", cards);
         return pickUser(updatedUser);
     } catch (error) {
         throw error;
