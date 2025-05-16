@@ -192,7 +192,7 @@ const update = async (userId, reqBody, userAvatarFile) => {
                 userAvatarFile.buffer,
                 "users"
             );
-            console.log(" uploadResult", uploadResult);
+            // console.log(" uploadResult", uploadResult);
 
             //Lưu lại url của file ảnh vào DB
             updatedUser = await userModel.update(userId, {

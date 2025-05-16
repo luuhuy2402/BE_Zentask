@@ -3,6 +3,8 @@ import { cardController } from "../../controllers/cardController";
 import { cardValidation } from "../../validations/cardValidation";
 import { authMiddleware } from "../../middlewares/authMiddleware";
 import { multerUpLoadMiddleware } from "../../middlewares/multerUploadMiddleware";
+import { multerUpLoadAttachmentMiddleware } from "../../middlewares/multerUploadAttachmentMiddleware";
+import { multerUploadCardFieldsMiddleware } from "../../middlewares/multerUploadCardFieldsMiddleware";
 
 const Router = express.Router();
 
@@ -15,7 +17,8 @@ Router.route("/").post(
 Router.route("/:id")
     .put(
         authMiddleware.isAuthorized,
-        multerUpLoadMiddleware.upload.single("cardCover"),
+        // multerUpLoadMiddleware.upload.single("cardCover"),
+        multerUploadCardFieldsMiddleware,
         cardValidation.update,
         cardController.update
     )

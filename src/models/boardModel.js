@@ -137,7 +137,7 @@ const getDetails = async (userId, boardId) => {
                 },
             ])
             .toArray();
-        console.log(result);
+        // console.log(result);
         return result[0] || null;
     } catch (error) {
         throw new Error(error);
@@ -253,7 +253,7 @@ const getBoards = async (userId, page, itemsPerPage, queryFilters) => {
                 { collation: { locale: "en" } }
             )
             .toArray();
-        console.log(" query", query);
+        // console.log(" query", query);
 
         const res = query[0];
         return {

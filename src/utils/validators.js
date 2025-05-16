@@ -13,3 +13,18 @@ export const PASSWORD_CONFIRMATION_MESSAGE =
 
 export const LIMIT_COMMON_FILE_SIZE = 10485760; //Gioi hạn kích thước byte = 10 MB
 export const ALLOW_COMMON_FILE_TYPES = ["image/jpg", "image/jpeg", "image/png"];
+
+export const LIMIT_ATTACHMENT_FILE_SIZE = 20 * 1024 * 1024; // = 20MB
+export const ALLOW_ATTACHMENT_FILE_TYPES = [
+    "image/jpeg",
+    "image/png",
+    "image/jpg",
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/vnd.ms-excel",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "application/zip",
+    "application/x-zip-compressed",
+    "application/octet-stream",
+];

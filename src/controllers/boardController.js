@@ -29,7 +29,7 @@ const update = async (req, res, next) => {
         const boardId = req.params.id;
 
         const updatedBoard = await boardService.update(boardId, req.body);
-        console.log(updatedBoard);
+        // console.log(updatedBoard);
         res.status(StatusCodes.OK).json(updatedBoard);
     } catch (error) {
         next(error);

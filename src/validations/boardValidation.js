@@ -97,7 +97,7 @@ const moveCardToDifferentColumn = async (req, res, next) => {
         await correctCondition.validateAsync(req.body, {
             abortEarly: false,
         });
-        console.log("validation");
+        // console.log("validation");
 
         next();
     } catch (error) {

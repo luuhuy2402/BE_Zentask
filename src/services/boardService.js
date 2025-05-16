@@ -19,7 +19,7 @@ const createNew = async (userId, reqbody) => {
         const getNewBoard = await boardModel.findOneById(
             createdBoard.insertedId
         );
-        console.log(getNewBoard);
+        // console.log(getNewBoard);
 
         return getNewBoard;
     } catch (error) {

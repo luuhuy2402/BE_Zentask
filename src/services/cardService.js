@@ -21,7 +21,13 @@ const createNew = async (reqbody) => {
     }
 };
 
-const update = async (cardId, reqBody, cardCoverFile, userInfo) => {
+const update = async (
+    cardId,
+    reqBody,
+    cardCoverFile,
+    attachmentFile,
+    userInfo
+) => {
     try {
         const updateData = {
             ...reqBody,
@@ -33,9 +39,29 @@ const update = async (cardId, reqBody, cardCoverFile, userInfo) => {
                 cardCoverFile.buffer,
                 "card-cover"
             );
+            // console.log("uploadResult", uploadResult);
+
             updatedCard = await cardModel.update(cardId, {
                 cover: uploadResult.secure_url,
             });
+        } else if (attachmentFile) {
+            const uploadResult = await CloudinaryProvider.streamUpload(
+                attachmentFile.buffer,
+                "attachment"
+            );
+            // console.log("uploadResult", uploadResult);
+            // let fileUrl = uploadResult.secure_url;
+
+            // // Xử lý URL đặc biệt cho PDF - thêm fl_attachment để buộc trình duyệt tải xuống
+            // if (uploadResult.format === "pdf") {
+            //     fileUrl = fileUrl.replace("/upload/", "/upload/fl_attachment/");
+            // }
+            updatedCard = await cardModel.unshiftAttachment(
+                cardId,
+                uploadResult.secure_url
+                
+            );
+            // console.log("updatedCard", updatedCard);
         } else if (updateData.commentToAdd) {
             const commentData = {
                 ...updateData.commentToAdd,

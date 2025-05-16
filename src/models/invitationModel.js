@@ -163,7 +163,7 @@ const findByUser = async (userId) => {
             ])
             .toArray();
 
-        console.log(results);
+        // console.log(results);
 
         return results;
     } catch (error) {
