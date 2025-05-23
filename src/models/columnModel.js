@@ -112,7 +112,20 @@ const deleteOneById = async (columnId) => {
         throw new Error(error);
     }
 };
+const deleteManyByBoardId = async (boardId) => {
+    try {
+        const result = await GET_DB()
+            .collection(COLUMN_COLLECTION_NAME)
+            .deleteMany({
+                boardId: new ObjectId(boardId),
+            });
+        // console.log("🚀 ~ deleteManyByColumnId ~ result:", result);
 
+        return result;
+    } catch (error) {
+        throw new Error(error);
+    }
+};
 const pullCardOrderIds = async (card) => {
     try {
         const result = await GET_DB()
@@ -137,4 +150,5 @@ export const columnModel = {
     update,
     deleteOneById,
     pullCardOrderIds,
+    deleteManyByBoardId,
 };

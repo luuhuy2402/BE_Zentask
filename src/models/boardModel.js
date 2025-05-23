@@ -75,6 +75,20 @@ const findOneById = async (boardId) => {
     }
 };
 
+const deleteOneById = async (boardId) => {
+    try {
+        const result = await GET_DB()
+            .collection(BOARD_COLLECTION_NAME)
+            .deleteOne({
+                _id: new ObjectId(boardId),
+            });
+        // console.log("🚀 ~ deleteOneById ~ result:", result);
+
+        return result;
+    } catch (error) {
+        throw new Error(error);
+    }
+};
 // Query tổng hợp (aggregate) để lấy toàn bộ Columns và Cards thuộc về Board
 const getDetails = async (userId, boardId) => {
     try {
@@ -290,4 +304,5 @@ export const boardModel = {
     pullColumnOrderIds,
     getBoards,
     pushMemberIds,
+    deleteOneById,
 };

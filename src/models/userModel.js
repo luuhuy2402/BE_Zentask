@@ -8,7 +8,6 @@ const USER_ROLES = {
     ADMIN: "admin",
 };
 
-
 const USER_COLLECTION_NAME = "users";
 const USER_COLLECTION_SCHEMA = Joi.object({
     email: Joi.string()

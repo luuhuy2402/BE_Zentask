@@ -140,6 +140,21 @@ const deleteManyByColumnId = async (columnId) => {
         throw new Error(error);
     }
 };
+
+const deleteManyByBoardId = async (boardId) => {
+    try {
+        const result = await GET_DB()
+            .collection(CARD_COLLECTION_NAME)
+            .deleteMany({
+                boardId: new ObjectId(boardId),
+            });
+        // console.log("🚀 ~ deleteManyByColumnId ~ result:", result);
+
+        return result;
+    } catch (error) {
+        throw new Error(error);
+    }
+};
 const unshiftNewComment = async (cardId, commentData) => {
     try {
         const result = await GET_DB()
@@ -231,4 +246,5 @@ export const cardModel = {
     deleteOneById,
     unshiftAttachment,
     findOneByUserId,
+    deleteManyByBoardId,
 };

@@ -19,6 +19,11 @@ Router.route("/:id")
         authMiddleware.isAuthorized,
         boardValidation.update,
         boardController.update
+    )
+    .delete(
+        authMiddleware.isAuthorized,
+        boardValidation.deleteItem,
+        boardController.deleteItem
     );
 
 //API hỗ trọ việc di chuyển card giữa các column khác nhau trogn một board

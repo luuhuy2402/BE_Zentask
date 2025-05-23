@@ -110,10 +110,27 @@ const getBoards = async (userId, page, itemsPerPage, queryFilters) => {
         throw error;
     }
 };
+
+const deleteItem = async (boardId) => {
+    try {
+
+        await boardModel.deleteOneById(boardId);
+        await cardModel.deleteManyByBoardId(boardId);
+        await columnModel.deleteManyByBoardId(boardId);
+
+        // //Xóa columnId trong mảng columnOrderIds của Board chứa column xóa
+        // await boardModel.pullColumnOrderIds(targetColumn);
+
+        return { deleteResult: "Column and its Cards deleted successfully" };
+    } catch (error) {
+        throw error;
+    }
+};
 export const boardService = {
     createNew,
     getDetails,
     update,
     moveCardToDifferentColumn,
     getBoards,
+    deleteItem,
 };
