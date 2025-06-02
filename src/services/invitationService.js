@@ -124,8 +124,19 @@ const updateBoardInvitation = async (userId, invitationId, status) => {
         throw error;
     }
 };
+
+const deleteItem = async (invitationId) => {
+    try {
+        await invitationModel.deleteOneById(invitationId);
+
+        return { deleteResult: "Invitation deleted successfully" };
+    } catch (error) {
+        throw error;
+    }
+};
 export const invitationService = {
     createNewBoardInvitation,
     getInvitations,
     updateBoardInvitation,
+    deleteItem,
 };

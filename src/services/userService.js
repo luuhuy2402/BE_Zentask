@@ -5,12 +5,14 @@ import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from "uuid";
 import { pickUser } from "../utils/formatters";
 import { WEBSITE_DOMAIN } from "../utils/constants";
-import { BrevoProvider } from "../providers/BrevoProvider";
+// import { BrevoProvider } from "../providers/BrevoProvider";
 import { JwtProvider } from "../providers/JwtProvider";
 import { env } from "../config/environment";
 import { CloudinaryProvider } from "../providers/CloudinaryProvider";
 import { cardModel } from "../models/cardModel";
 import { isEmpty } from "lodash";
+import generateTemporaryPassword from "../utils/temporaryPassword";
+import { MailerSendProvider } from "../providers/MailerSendProvider";
 
 const createNew = async (reqBody) => {
     try {
@@ -41,13 +43,12 @@ const createNew = async (reqBody) => {
             <h3>${verificationLink}</h3>
             <h3>Sincerely,<br/>- Luu Hieu</h3>
         `;
-        //Gọi tới cái Provider gửi mail
-        await BrevoProvider.sendEmail(
+     
+        await MailerSendProvider.sendEmail(
             getNewUser.email,
             customSubject,
             htmlContent
         );
-
         //return trả về dữ liệu về Controller
         return pickUser(getNewUser);
     } catch (error) {
@@ -272,10 +273,57 @@ const update = async (userId, reqBody, userAvatarFile) => {
         throw error;
     }
 };
+
+const forgotPassword = async (reqBody) => {
+    try {
+        const existUser = await userModel.findOneByEmail(reqBody.email);
+
+        if (!existUser)
+            throw new ApiError(StatusCodes.NOT_FOUND, "Account not found!");
+
+        if (!existUser.isActive)
+            throw new ApiError(
+                StatusCodes.NOT_ACCEPTABLE,
+                "Your account is not active!"
+            );
+
+        // Tạo mật khẩu tạm thời mới
+        const temporaryPassword = generateTemporaryPassword();
+        // console.log("temporaryPassword", temporaryPassword);
+
+        const hashedTempPassword = bcrypt.hashSync(temporaryPassword, 8);
+        const updateData = {
+            password: hashedTempPassword,
+        };
+        await userModel.update(existUser._id, updateData);
+
+        //Gửi email chứa mật khẩu tạm thời cho người dùng
+        const customSubject =
+            "Zentask MERN Stack Advanced: Your temporary password!";
+        const htmlContent = `
+            <h3>Your temporary password is:</h3>
+            <h2 style="color: #007bff; background: #f8f9fa; padding: 10px; border-radius: 5px; display: inline-block;">${temporaryPassword}</h2>
+            <p>Please login with this temporary password and change it immediately for security reasons.</p>
+            <h3>Sincerely,<br/>- Luu Hieu</h3>
+        `;
+
+        //Gọi tới Provider gửi mail
+        await MailerSendProvider.sendEmail(
+            existUser.email,
+            customSubject,
+            htmlContent
+        );
+
+        return { message: "A temporary password has been sent to your email!" };
+    } catch (error) {
+        throw error;
+    }
+};
 export const userService = {
     createNew,
     verifyAccount,
     login,
     refreshToken,
     update,
+    forgotPassword,
 };

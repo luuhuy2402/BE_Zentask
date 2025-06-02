@@ -12,16 +12,9 @@ const sendEmail = async (recipientEmail, customSubject, customHtmlContent) => {
         email: env.ADMIN_EMAIL_ADDRESS,
         name: env.ADMIN_EMAIL_NAME,
     };
-    //Những tài khoản nhận email
-    //'to' laf 1 Array để có thể tùy biến gửi 1 email tới nhiều user tùy theo tính năng dự án
     sendSmtpEmail.to = [{ email: recipientEmail }];
-    //Tiêu đề của email
     sendSmtpEmail.subject = customSubject;
-
-    //Nội dung email dạng HTML
     sendSmtpEmail.htmlContent = customHtmlContent;
-
-    //Gọi hành động gửi mail
     return apiInstance.sendTransacEmail(sendSmtpEmail);
 };
 

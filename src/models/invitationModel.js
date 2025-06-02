@@ -170,7 +170,20 @@ const findByUser = async (userId) => {
         throw new Error(error);
     }
 };
+const deleteOneById = async (invitationId) => {
+    try {
+        const result = await GET_DB()
+            .collection(INVITATION_COLLECTION_NAME)
+            .deleteOne({
+                _id: new ObjectId(invitationId),
+            });
+        // console.log("🚀 ~ deleteOneById ~ result:", result);
 
+        return result;
+    } catch (error) {
+        throw new Error(error);
+    }
+};
 export const invitationModel = {
     INVITATION_COLLECTION_NAME,
     INVITATION_COLLECTION_SCHEMA,
@@ -178,4 +191,5 @@ export const invitationModel = {
     findOneById,
     update,
     findByUser,
+    deleteOneById,
 };

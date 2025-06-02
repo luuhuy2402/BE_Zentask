@@ -12,10 +12,13 @@ Router.route("/board").post(
 );
 
 //Get invitations byUser
-Router.route("/").get(
-    authMiddleware.isAuthorized,
-    invitationController.getInvitations
-);
+Router.route("/")
+    .get(authMiddleware.isAuthorized, invitationController.getInvitations)
+    .delete(
+        authMiddleware.isAuthorized,
+        invitationValidation.deleteItem,
+        invitationController.deleteItem
+    );
 
 //Cập nhật mới bản ghi Board Invitation
 Router.route("/board/:invitationId").put(

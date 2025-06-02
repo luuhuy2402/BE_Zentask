@@ -17,6 +17,11 @@ Router.route("/verify").put(
 
 Router.route("/login").post(userValidation.login, userController.login);
 
+Router.route("/forgot-password").post(
+    userValidation.forgotPassword,
+    userController.forgotPassword
+);
+
 Router.route("/logout").delete(userController.logout);
 Router.route("/refresh_token").get(userController.refreshToken);
 
