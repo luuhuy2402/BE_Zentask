@@ -62,6 +62,12 @@ const update = async (
                 uploadResult.secure_url
             );
             // console.log("updatedCard", updatedCard);
+        } else if (reqBody.attachmentToRemove) {
+            // Xử lý xóa attachment
+            updatedCard = await cardModel.removeAttachment(
+                cardId,
+                reqBody.attachmentToRemove
+            );
         } else if (updateData.commentToAdd) {
             const commentData = {
                 ...updateData.commentToAdd,

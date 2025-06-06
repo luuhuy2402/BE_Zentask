@@ -292,6 +292,23 @@ const unshiftAttachment = async (cardId, attachmentFile) => {
     }
 };
 
+const removeAttachment = async (cardId, attachmentUrl) => {
+    try {
+        const result = await GET_DB()
+            .collection(CARD_COLLECTION_NAME)
+            .findOneAndUpdate(
+                { _id: new ObjectId(cardId) },
+                {
+                    $pull: { attachment: attachmentUrl },
+                },
+                { returnDocument: "after" }
+            );
+        return result;
+    } catch (error) {
+        throw new Error(error);
+    }
+};
+
 export const cardModel = {
     CARD_COLLECTION_NAME,
     CARD_COLLECTION_SCHEMA,
@@ -305,6 +322,7 @@ export const cardModel = {
     updateMembers,
     deleteOneById,
     unshiftAttachment,
+    removeAttachment,
     findOneByUserId,
     deleteManyByBoardId,
 };
