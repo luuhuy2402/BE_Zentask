@@ -7,7 +7,7 @@ const mailerSend = new MailerSend({
 // console.log(env.MAILERSEND_API_KEY);
 const sendEmail = async (recipientEmail, customSubject, customHtmlContent) => {
     const sentFrom = new Sender(
-        'support@test-p7kx4xwwyxvg9yjr.mlsender.net',
+        'MS_u726io@test-p7kx4xwwyxvg9yjr.mlsender.net',
         env.ADMIN_EMAIL_NAME
     );
     // console.log(env.ADMIN_EMAIL_ADDRESS, env.ADMIN_EMAIL_NAME); 

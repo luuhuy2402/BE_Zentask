@@ -30,6 +30,7 @@ const CARD_COLLECTION_SCHEMA = Joi.object({
         .default([]),
     comments: Joi.array()
         .items({
+            _id: Joi.string().required(),
             userId: Joi.string()
                 .required()
                 .pattern(OBJECT_ID_RULE)
@@ -157,11 +158,15 @@ const deleteManyByBoardId = async (boardId) => {
 };
 const unshiftNewComment = async (cardId, commentData) => {
     try {
+        const commentWithId = {
+            ...commentData,
+            _id: new ObjectId().toString()
+        };
         const result = await GET_DB()
             .collection(CARD_COLLECTION_NAME)
             .findOneAndUpdate(
                 { _id: new ObjectId(cardId) },
-                { $push: { comments: { $each: [commentData], $position: 0 } } },
+                { $push: { comments: { $each: [commentWithId], $position: 0 } } },
                 { returnDocument: "after" }
             );
         return result;
@@ -169,6 +174,59 @@ const unshiftNewComment = async (cardId, commentData) => {
         throw new Error(error);
     }
 };
+
+const updateComment = async (cardId, commentId, newContent, userId) => {
+    try {
+        const result = await GET_DB()
+            .collection(CARD_COLLECTION_NAME)
+            .findOneAndUpdate(
+                { 
+                    _id: new ObjectId(cardId),
+                    "comments._id": commentId,
+                    "comments.userId": userId
+                },
+                { 
+                    $set: { 
+                        "comments.$[elem].content": newContent,
+                        "comments.$[elem].commentedAt": Date.now()
+                    }
+                },
+                { 
+                    arrayFilters: [{ 
+                        "elem._id": commentId,
+                        "elem.userId": userId 
+                    }],
+                    returnDocument: "after"
+                }
+            );
+        return result;
+    } catch (error) {
+        throw new Error(error);
+    }
+};
+
+const deleteComment = async (cardId, commentId, userId) => {
+    try {
+        const result = await GET_DB()
+            .collection(CARD_COLLECTION_NAME)
+            .findOneAndUpdate(
+                { _id: new ObjectId(cardId) },
+                { 
+                    $pull: { 
+                        comments: { 
+                            _id: commentId,
+                            userId: userId
+                        }
+                    }
+                },
+                { returnDocument: "after" }
+            );
+        return result;
+    } catch (error) {
+        throw new Error(error);
+    }
+};
+
 //Thêm hoặc xóa member khỏi card theo action
 const updateMembers = async (cardId, incomingMemberInfo) => {
     try {
@@ -242,6 +300,8 @@ export const cardModel = {
     update,
     deleteManyByColumnId,
     unshiftNewComment,
+    updateComment,
+    deleteComment,
     updateMembers,
     deleteOneById,
     unshiftAttachment,

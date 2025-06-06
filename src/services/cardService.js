@@ -73,6 +73,22 @@ const update = async (
                 cardId,
                 commentData
             );
+           
+        } else if (updateData.commentId && updateData.newContent) {
+            // Update comment
+            updatedCard = await cardModel.updateComment(
+                cardId,
+                updateData.commentId,
+                updateData.newContent,
+                userInfo._id
+            );
+        } else if (updateData.commentId && updateData.action === 'delete') {
+            // Delete comment
+            updatedCard = await cardModel.deleteComment(
+                cardId,
+                updateData.commentId,
+                userInfo._id
+            );
         } else if (updateData.incomingMemberInfo) {
             //Ađ hoặc remove thành viên ra khỏi card
             updatedCard = await cardModel.updateMembers(
