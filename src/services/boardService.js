@@ -6,6 +6,7 @@ import { cloneDeep } from "lodash";
 import { columnModel } from "../models/columnModel";
 import { cardModel } from "../models/cardModel";
 import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_PAGE } from "../utils/constants";
+import { CloudinaryProvider } from "../providers/CloudinaryProvider";
 
 const createNew = async (userId, reqbody) => {
     try {
@@ -54,11 +55,26 @@ const getDetails = async (userId, boardId) => {
     }
 };
 
-const update = async (boardId, reqBody) => {
+const update = async (boardId, reqBody, boardCoverFile) => {
     try {
-        const updateData = { ...reqBody, updateAt: Date.now() };
+        const updateData = { ...reqBody, updatedAt: Date.now() };
+        let updatedBoard = {};
 
-        const updatedBoard = await boardModel.update(boardId, updateData);
+        if (boardCoverFile) {
+            //Trường hợp upload file lên Cloud Storage: Cloudinary
+            const uploadResult = await CloudinaryProvider.streamUpload(
+                boardCoverFile.buffer,
+                "board-cover"
+            );
+
+            //Lưu lại url của file ảnh vào DB
+            updatedBoard = await boardModel.update(boardId, {
+                boardCover: uploadResult.secure_url,
+                updatedAt: Date.now()
+            });
+        } else {
+            updatedBoard = await boardModel.update(boardId, updateData);
+        }
 
         return updatedBoard;
     } catch (error) {

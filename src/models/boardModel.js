@@ -13,6 +13,7 @@ const BOARD_COLLECTION_SCHEMA = Joi.object({
     title: Joi.string().required().min(3).max(50).trim().strict(),
     slug: Joi.string().required().min(3).trim().strict(),
     description: Joi.string().required().min(3).max(256).trim().strict(),
+    boardCover: Joi.string().default(null),
     type: Joi.string()
         .valid(...Object.values(BOARD_TYPES))
         .required(),
@@ -200,10 +201,14 @@ const update = async (boardId, updateData) => {
                 (_id) => new ObjectId(_id)
             );
         }
+
+        // Convert boardId to ObjectId
+        const objectId = new ObjectId(boardId);
+        
         const result = await GET_DB()
             .collection(BOARD_COLLECTION_NAME)
             .findOneAndUpdate(
-                { _id: new ObjectId(boardId) },
+                { _id: objectId },
                 { $set: updateData },
                 { returnDocument: "after" }
             );

@@ -27,8 +27,8 @@ const getDetails = async (req, res, next) => {
 const update = async (req, res, next) => {
     try {
         const boardId = req.params.id;
-
-        const updatedBoard = await boardService.update(boardId, req.body);
+        const boardCoverFile = req.file;
+        const updatedBoard = await boardService.update(boardId, req.body,boardCoverFile);
         // console.log(updatedBoard);
         res.status(StatusCodes.OK).json(updatedBoard);
     } catch (error) {
