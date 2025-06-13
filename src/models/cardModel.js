@@ -20,6 +20,7 @@ const CARD_COLLECTION_SCHEMA = Joi.object({
 
     title: Joi.string().required().min(3).max(50).trim().strict(),
     description: Joi.string().optional(),
+    dueDate: Joi.date().timestamp("javascript").default(null),
 
     cover: Joi.string().default(null),
     attachment: Joi.array().items(Joi.string()).default([]),
@@ -61,7 +62,7 @@ const validateBeforeCreate = async (data) => {
 
 const createNew = async (data) => {
     try {
-        const validData = await validateBeforeCreate(data);
+        const validData = await validateBeforeCreate(data); 
         const newCardToAdd = {
             ...validData,
             boardId: new ObjectId(validData.boardId),
@@ -70,7 +71,7 @@ const createNew = async (data) => {
 
         const createdCard = await GET_DB()
             .collection(CARD_COLLECTION_NAME)
-            .insertOne(newCardToAdd);
+            .insertOne(newCardToAdd);      
         return createdCard;
     } catch (error) {
         throw new Error(error);

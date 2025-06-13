@@ -5,12 +5,10 @@ import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from "uuid";
 import { pickUser } from "../utils/formatters";
 import { WEBSITE_DOMAIN } from "../utils/constants";
-// import { BrevoProvider } from "../providers/BrevoProvider";
 import { JwtProvider } from "../providers/JwtProvider";
 import { env } from "../config/environment";
 import { CloudinaryProvider } from "../providers/CloudinaryProvider";
 import { cardModel } from "../models/cardModel";
-import { isEmpty } from "lodash";
 import generateTemporaryPassword from "../utils/temporaryPassword";
 import { MailerSendProvider } from "../providers/MailerSendProvider";
 
@@ -117,7 +115,6 @@ const login = async (reqBody) => {
         const accessToken = await JwtProvider.generateToken(
             userInfo,
             env.ACCESS_TOKEN_SECRET_SIGNATURE,
-            // 5 //5 giây
             env.ACCESS_TOKEN_LIFE
         );
 
