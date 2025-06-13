@@ -20,6 +20,7 @@ const CARD_COLLECTION_SCHEMA = Joi.object({
 
     title: Joi.string().required().min(3).max(50).trim().strict(),
     description: Joi.string().optional(),
+    startDate: Joi.date().timestamp("javascript").default(Date.now),
     dueDate: Joi.date().timestamp("javascript").default(null),
 
     cover: Joi.string().default(null),
