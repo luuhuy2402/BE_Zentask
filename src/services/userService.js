@@ -12,6 +12,7 @@ import { cardModel } from "../models/cardModel";
 import generateTemporaryPassword from "../utils/temporaryPassword";
 import { MailerSendProvider } from "../providers/MailerSendProvider";
 
+
 const createNew = async (reqBody) => {
     try {
         //Kiểm tra xem email đã tồn tại trong hệ thống chưa
